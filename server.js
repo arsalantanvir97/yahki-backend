@@ -19,6 +19,7 @@ import SettingRoutes from "./routes/settingRoutes";
 import PrinterRoutes from "./routes/printerRoutes";
 import PrintRoutes from "./routes/printRoutes";
 import productRoutes from "./routes/productRoutes";
+import orderRoutes from "./routes/orderRoutes";
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ app.use("/api/settings", SettingRoutes);
 app.use("/api/printer", PrinterRoutes);
 app.use("/api/print", PrintRoutes);
 app.use("/api/product", productRoutes);
+app.use("/api/order", orderRoutes);
 
 
 const __dirname = path.resolve();
