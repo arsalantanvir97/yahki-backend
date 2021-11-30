@@ -20,6 +20,10 @@ import PrinterRoutes from "./routes/printerRoutes";
 import PrintRoutes from "./routes/printRoutes";
 import productRoutes from "./routes/productRoutes";
 import orderRoutes from "./routes/orderRoutes";
+import { v4 as uuidv4 } from 'uuid'
+
+import Stripe from 'stripe'
+const stripe = Stripe('sk_test_OVw01bpmRN2wBK2ggwaPwC5500SKtEYy9V')
 
 dotenv.config();
 
@@ -45,6 +49,53 @@ app.use(
     },
   ])
 );
+
+app.post('/api/checkout', async (req, res) => {
+  console.log('Request:', req.body)
+
+  let error
+  let status
+  try {
+    const { product, token } = req.body
+    console.log(product, typeof product, 'prodprice')
+    const customer = await stripe.customers.create({
+      email: token.email,
+      source: token.id,
+    })
+
+    const idempotency_key = uuidv4()
+    const charge = await stripe.charges.create(
+      {
+        amount: product * 100,
+        currency: 'usd',
+        customer: customer.id,
+        receipt_email: token.email,
+        // description: `Purchased the ${product.name}`,
+        shipping: {
+          name: token.card.name,
+          address: {
+            line1: token.card.address_line1,
+            line2: token.card.address_line2,
+            city: token.card.address_city,
+            country: token.card.address_country,
+            postal_code: token.card.address_zip,
+          },
+        },
+      },
+      {
+        idempotency_key,
+      }
+    )
+    console.log('Charge:', { charge })
+    res.json(charge)
+
+    status = 'success'
+  } catch (error) {
+    console.error('Error:', error)
+    status = 'failure'
+    res.json(error)
+  }
+})
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);

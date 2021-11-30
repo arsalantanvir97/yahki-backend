@@ -73,4 +73,61 @@ const createProduct = async (req, res) => {
     }
   };
 
-  export {createProduct,getproducts,getProductDetails};
+  const detoxProducts = async (req, res) => {
+    try {
+      const detoxproduct = await Product.find({category:'Detox'})
+      console.log('detoxproduct',detoxproduct)
+      await res.status(201).json({
+        detoxproduct,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString(),
+      });
+    }
+  };
+  const productlogs = async (req, res) => {
+    try {
+      console.log("req.query.searchString", req.query.searchString);
+      const searchParam = req.query.searchString
+        ? { $text: { $search: req.query.searchString } }
+        : {};
+      const status_filter = req.query.status ? { status: req.query.status } : {};
+  
+      const from = req.query.from;
+      const to = req.query.to;
+      let dateFilter = {};
+      if (from && to)
+        dateFilter = {
+          createdAt: {
+            $gte: moment.utc(new Date(from)).startOf("day"),
+            $lte: moment.utc(new Date(to)).endOf("day"),
+          },
+        };
+  
+      console.log("req.params.id", req.params.id);
+      const product = await Product.paginate(
+        {
+          ...searchParam,
+          ...status_filter,
+          ...dateFilter,
+        },
+        {
+          page: req.query.page,
+          limit: req.query.perPage,
+          lean: true,
+          sort: "-_id",
+        }
+      );
+      await res.status(200).json({
+        product,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        message: err.toString(),
+      });
+    }
+  };
+  
+  export {createProduct,getproducts,getProductDetails,detoxProducts,productlogs};

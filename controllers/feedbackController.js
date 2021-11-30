@@ -1,5 +1,6 @@
 import Feedback from "../models/FeedbackModel.js";
 import moment from "moment";
+import Product from "../models/ProductModel.js";
 
 const createFeedback = async (req, res) => {
     const { id,firstName, lastName,email,type,subject,message } = req.body;
@@ -84,6 +85,8 @@ console.log('req.body',req.body)
       });
     }
   };
+
+ 
 
 
   export {createFeedback,Feedbacklogs,getFeedbackDetails};
