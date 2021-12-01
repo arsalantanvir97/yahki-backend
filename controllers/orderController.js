@@ -112,9 +112,4 @@ const orderlogs = async (req, res) => {
   }
 };
 
-
-
-
-
-
-export { addOrderItems, getOrderById, updateOrderToPaid, orderlogs ,};
+export { addOrderItems, getOrderById, updateOrderToPaid, orderlogs };

@@ -3,7 +3,7 @@ import cors from "cors";
 import express from "express";
 import dotenv from "dotenv";
 import multer from "multer";
-import logger from "morgan"
+import logger from "morgan";
 
 import connectDB from "./config/db.js";
 import { fileFilter, fileStorage } from "./multer";
@@ -20,10 +20,12 @@ import PrinterRoutes from "./routes/printerRoutes";
 import PrintRoutes from "./routes/printRoutes";
 import productRoutes from "./routes/productRoutes";
 import orderRoutes from "./routes/orderRoutes";
-import { v4 as uuidv4 } from 'uuid'
+import wishListRoutes from "./routes/wishListRoutes";
 
-import Stripe from 'stripe'
-const stripe = Stripe('sk_test_OVw01bpmRN2wBK2ggwaPwC5500SKtEYy9V')
+import { v4 as uuidv4 } from "uuid";
+
+import Stripe from "stripe";
+const stripe = Stripe("sk_test_OVw01bpmRN2wBK2ggwaPwC5500SKtEYy9V");
 
 dotenv.config();
 
@@ -50,24 +52,24 @@ app.use(
   ])
 );
 
-app.post('/api/checkout', async (req, res) => {
-  console.log('Request:', req.body)
+app.post("/api/checkout", async (req, res) => {
+  console.log("Request:", req.body);
 
-  let error
-  let status
+  let error;
+  let status;
   try {
-    const { product, token } = req.body
-    console.log(product, typeof product, 'prodprice')
+    const { product, token } = req.body;
+    console.log(product, typeof product, "prodprice");
     const customer = await stripe.customers.create({
       email: token.email,
       source: token.id,
-    })
+    });
 
-    const idempotency_key = uuidv4()
+    const idempotency_key = uuidv4();
     const charge = await stripe.charges.create(
       {
         amount: product * 100,
-        currency: 'usd',
+        currency: "usd",
         customer: customer.id,
         receipt_email: token.email,
         // description: `Purchased the ${product.name}`,
@@ -85,17 +87,17 @@ app.post('/api/checkout', async (req, res) => {
       {
         idempotency_key,
       }
-    )
-    console.log('Charge:', { charge })
-    res.json(charge)
+    );
+    console.log("Charge:", { charge });
+    res.json(charge);
 
-    status = 'success'
+    status = "success";
   } catch (error) {
-    console.error('Error:', error)
-    status = 'failure'
-    res.json(error)
+    console.error("Error:", error);
+    status = "failure";
+    res.json(error);
   }
-})
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
@@ -109,7 +111,7 @@ app.use("/api/printer", PrinterRoutes);
 app.use("/api/print", PrintRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/order", orderRoutes);
-
+app.use("/api/wishList", wishListRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));
