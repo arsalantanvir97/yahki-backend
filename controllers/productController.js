@@ -77,6 +77,7 @@ const getProductDetails = async (req, res) => {
 };
 
 const detoxProducts = async (req, res) => {
+  console.log("req.body.category", req.body.category);
   try {
     const detoxproduct = await Product.find({ category: req.body.category });
     console.log("detoxproduct", detoxproduct);
@@ -106,6 +107,7 @@ const productlogs = async (req, res) => {
     const category_filter = req.query.category
       ? { category: req.query.category }
       : {};
+   
 
     // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
     const from = req.query.from;
@@ -202,7 +204,6 @@ const productbycategorylogs = async (req, res) => {
   }
 };
 
-
 const getlimitedProducts = async (req, res) => {
   try {
     const products = await Product.find().sort({ $natural: -1 }).limit(5);
@@ -228,5 +229,5 @@ export {
   detoxProducts,
   productlogs,
   productbycategorylogs,
-  getlimitedProducts
+  getlimitedProducts,
 };
