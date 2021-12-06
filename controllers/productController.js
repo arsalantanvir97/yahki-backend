@@ -107,7 +107,6 @@ const productlogs = async (req, res) => {
     const category_filter = req.query.category
       ? { category: req.query.category }
       : {};
-   
 
     // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
     const from = req.query.from;
@@ -120,10 +119,38 @@ const productlogs = async (req, res) => {
           $lte: moment.utc(new Date(to)).endOf("day"),
         }, // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
       };
+    // const lowprice=req.query.lowerprice ? { "$sort": { "price": 1 } } : {};
 
-    console.log("req.params.id", req.params.id);
+    let sort =
+      req.query.sort == "asc"
+        ? { price: 1 }
+        : req.query.sort == "des"
+        ? { price: -1 }
+        : req.query.sort == "latest"
+        ? "createdAt"
+        : req.query.sort == "nameasc"
+        ? { name: 1 }
+        : req.query.sort == "namedes"
+        ? { name: -1 }
+        : "createdAt";
+
+    // console.log('lowprice',lowprice)
+    console.log("sort", sort);
+    const pricefrom = req.query.pricefrom;
+    const priceto = req.query.priceto;
+    let pricerange = {};
+    if (pricefrom && priceto)
+      pricerange = {
+        price: {
+          $gte: pricefrom,
+          $lte: priceto,
+        }, // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
+      };
+
+    // console.log("req.params.id", req.params.id);
     const product = await Product.paginate(
       {
+        ...pricerange,
         // ...latestfilter,
         ...category_filter,
         ...searchParam,
@@ -134,7 +161,7 @@ const productlogs = async (req, res) => {
         page: req.query.page,
         limit: req.query.perPage,
         lean: true,
-        sort: "-_id",
+        sort: sort,
       }
     );
     await res.status(200).json({
@@ -160,9 +187,6 @@ const productbycategorylogs = async (req, res) => {
       : {};
 
     const status_filter = req.query.status ? { status: req.query.status } : {};
-    const category_filter = req.query.category
-      ? { category: req.query.category }
-      : {};
 
     // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
     const from = req.query.from;
@@ -175,13 +199,40 @@ const productbycategorylogs = async (req, res) => {
           $lte: moment.utc(new Date(to)).endOf("day"),
         }, // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
       };
+    // const lowprice=req.query.lowerprice ? { "$sort": { "price": 1 } } : {};
 
-    console.log("req.params.id", req.params.id);
+    let sort =
+      req.query.sort == "asc"
+        ? { price: 1 }
+        : req.query.sort == "des"
+        ? { price: -1 }
+        : req.query.sort == "latest"
+        ? "createdAt"
+        : req.query.sort == "nameasc"
+        ? { name: 1 }
+        : req.query.sort == "namedes"
+        ? { name: -1 }
+        : "createdAt";
+
+    // console.log('lowprice',lowprice)
+    console.log("sort", sort);
+    const pricefrom = req.query.pricefrom;
+    const priceto = req.query.priceto;
+    let pricerange = {};
+    if (pricefrom && priceto)
+      pricerange = {
+        price: {
+          $gte: pricefrom,
+          $lte: priceto,
+        }, // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
+      };
+
+    // console.log("req.params.id", req.params.id);
     const product = await Product.paginate(
       {
         category: req.params.id,
+        ...pricerange,
         // ...latestfilter,
-        ...category_filter,
         ...searchParam,
         ...status_filter,
         ...dateFilter,
@@ -190,7 +241,7 @@ const productbycategorylogs = async (req, res) => {
         page: req.query.page,
         limit: req.query.perPage,
         lean: true,
-        sort: "-_id",
+        sort: sort,
       }
     );
     await res.status(200).json({

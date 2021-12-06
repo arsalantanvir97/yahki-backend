@@ -22,6 +22,7 @@ import PrintRoutes from "./routes/printRoutes";
 import productRoutes from "./routes/productRoutes";
 import orderRoutes from "./routes/orderRoutes";
 import wishListRoutes from "./routes/wishListRoutes";
+import documentRoutes from "./routes/documentRoutes";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -67,6 +68,10 @@ app.use(
     },
     {
       name: "ad_video",
+      maxCount: 1,
+    },
+    {
+      name: "doc_schedule",
       maxCount: 1,
     },
   ])
@@ -132,10 +137,16 @@ app.use("/api/print", PrintRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/wishList", wishListRoutes);
+app.use("/api/document", documentRoutes);
+
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));
-
+app.use("/api/download/uploads/:file_name", function (req, res) {
+  console.log("IN HERE", req.params);
+  const file = `${__dirname}/uploads/${req.params.file_name}`;
+  res.download(file); // Set disposition and send it.
+});
 app.get("/", (req, res) => {
   res.send("API is running....");
 });
