@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
 const ReviewSchema = mongoose.Schema(
@@ -9,73 +9,70 @@ const ReviewSchema = mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
-    },
+      ref: "User"
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
-)
+);
 
 const ProductSchema = mongoose.Schema(
   {
     admin: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'Admin',
+      ref: "Admin"
     },
     name: {
-      type: String,
-      required: true,
+      type: String
     },
     productimage: {
-      type: String,
-      required: true,
+      type: Array
     },
-    brand: {
-      type: String,
-      required: true,
+  
+    pricerange: {
+      type: Array
     },
-    weight: {
-        type: Number,
-        required: true,
-      },
     category: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: "Category"
     },
     description: {
-      type: String,
-      required: true,
+      type: String
+    },
+    status: {
+      type: Boolean
     },
     reviews: [ReviewSchema],
     rating: {
       type: Number,
-      required: true,
-      default: 0,
+
+      default: 0
     },
     numReviews: {
       type: Number,
-      required: true,
-      default: 0,
+
+      default: 0
     },
     price: {
       type: Number,
-      required: true,
-      default: 0,
+
+      
     },
     countInStock: {
       type: Number,
-      required: true,
-      default: 0,
-    },
+
+      
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
-)
+);
 ProductSchema.plugin(mongoosePaginate);
 ProductSchema.index({ "$**": "text" });
-const Product = mongoose.model('Product', ProductSchema)
+const Product = mongoose.model("Product", ProductSchema);
 
-export default Product
+export default Product;

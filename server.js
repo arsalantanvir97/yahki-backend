@@ -23,6 +23,7 @@ import productRoutes from "./routes/productRoutes";
 import orderRoutes from "./routes/orderRoutes";
 import wishListRoutes from "./routes/wishListRoutes";
 import documentRoutes from "./routes/documentRoutes";
+import categoryRoutes from "./routes/categoryRoutes";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -40,13 +41,13 @@ if (local) {
   credentials = {
     key: fs.readFileSync("/etc/apache2/ssl/onlinetestingserver.key", "utf8"),
     cert: fs.readFileSync("/etc/apache2/ssl/onlinetestingserver.crt", "utf8"),
-    ca: fs.readFileSync("/etc/apache2/ssl/onlinetestingserver.ca"),
+    ca: fs.readFileSync("/etc/apache2/ssl/onlinetestingserver.ca")
   };
 } else {
   credentials = {
     key: fs.readFileSync("../certs/ssl.key"),
     cert: fs.readFileSync("../certs/ssl.crt"),
-    ca: fs.readFileSync("../certs/ca-bundle"),
+    ca: fs.readFileSync("../certs/ca-bundle")
   };
 }
 
@@ -60,19 +61,23 @@ app.use(logger("dev"));
 app.use(
   multer({
     storage: fileStorage,
-    fileFilter: fileFilter,
+    fileFilter: fileFilter
   }).fields([
     {
       name: "user_image",
-      maxCount: 1,
+      maxCount: 1
     },
     {
       name: "ad_video",
-      maxCount: 1,
+      maxCount: 1
     },
     {
       name: "doc_schedule",
-      maxCount: 1,
+      maxCount: 1
+    },
+    {
+      name: 'reciepts',
+      maxCount: 12,
     },
   ])
 );
@@ -87,7 +92,7 @@ app.post("/api/checkout", async (req, res) => {
     console.log(product, typeof product, "prodprice");
     const customer = await stripe.customers.create({
       email: token.email,
-      source: token.id,
+      source: token.id
     });
 
     const idempotency_key = uuidv4();
@@ -105,12 +110,12 @@ app.post("/api/checkout", async (req, res) => {
             line2: token.card.address_line2,
             city: token.card.address_city,
             country: token.card.address_country,
-            postal_code: token.card.address_zip,
-          },
-        },
+            postal_code: token.card.address_zip
+          }
+        }
       },
       {
-        idempotency_key,
+        idempotency_key
       }
     );
     console.log("Charge:", { charge });
@@ -138,7 +143,7 @@ app.use("/api/product", productRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/wishList", wishListRoutes);
 app.use("/api/document", documentRoutes);
-
+app.use("/api/category", categoryRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));

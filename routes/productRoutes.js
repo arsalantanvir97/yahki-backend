@@ -2,16 +2,35 @@ import express from "express";
 const router = express.Router();
 
 import {
-    createProduct,getproducts,getProductDetails,detoxProducts,productlogs,productbycategorylogs,getlimitedProducts
+  createProduct,
+  getproducts,
+  getProductDetails,
+  detoxProducts,
+  productlogs,
+  productbycategorylogs,
+  getlimitedProducts,
+  productlogsofAdmin,
+  toggleActiveStatus,
+  deleteProduct,
+  editProduct
 } from "../controllers/productController";
-router.post("/createProduct",createProduct);
-router.get("/getproducts",getproducts);
+import { protect } from "../middlewares/authMiddleware";
+
+router.post("/createProduct", protect, createProduct);
+router.get("/getproducts", getproducts);
 router.get("/getProductDetails/:id", getProductDetails);
-router.get("/getlimitedProducts",getlimitedProducts);
+router.get("/getlimitedProducts", getlimitedProducts);
+router.get("/toggle-active/:id", protect, toggleActiveStatus);
 
-router.post("/detoxProducts",detoxProducts);
-router.get("/productlogs",productlogs);
-router.get("/productbycategorylogs/:id",productbycategorylogs);
+router.post("/detoxProducts", detoxProducts);
+router.post("/editProduct", protect,editProduct);
 
 
-export default router
+router.get("/productlogs", productlogs);
+router.get("/productlogsofAdmin", productlogsofAdmin);
+router.get('/deleteProduct/:id', protect, deleteProduct)
+
+
+router.get("/productbycategorylogs/:id", productbycategorylogs);
+
+export default router;
