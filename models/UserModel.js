@@ -7,7 +7,9 @@ const UserSchema = mongoose.Schema(
     firstName: {
       type: String,
     },
-  
+    lastName: {
+      type: String,
+    },
     email: {
       type: String,
       required: true,
@@ -18,6 +20,8 @@ const UserSchema = mongoose.Schema(
       required: true,
     },
     userImage:{type:String} ,
+    type:{type:String} ,
+
     status: { type: Boolean, default: true },
   },
   {

@@ -11,14 +11,8 @@ import { fileFilter, fileStorage } from "./multer";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import vendorRoutes from "./routes/vendorRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes";
-import RequestMachineRoutes from "./routes/requestmachine";
-import AdManagementRoutes from "./routes/adManagementRoutes";
 import SubscriptionRoutes from "./routes/subscriptionRoutes";
-import SettingRoutes from "./routes/settingRoutes";
-import PrinterRoutes from "./routes/printerRoutes";
-import PrintRoutes from "./routes/printRoutes";
 import productRoutes from "./routes/productRoutes";
 import orderRoutes from "./routes/orderRoutes";
 import wishListRoutes from "./routes/wishListRoutes";
@@ -76,9 +70,9 @@ app.use(
       maxCount: 1
     },
     {
-      name: 'reciepts',
-      maxCount: 12,
-    },
+      name: "reciepts",
+      maxCount: 12
+    }
   ])
 );
 
@@ -131,14 +125,8 @@ app.post("/api/checkout", async (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/vendor", vendorRoutes);
 app.use("/api/feedback", feedbackRoutes);
-app.use("/api/requestmachine", RequestMachineRoutes);
-app.use("/api/admanagement", AdManagementRoutes);
 app.use("/api/subscription", SubscriptionRoutes);
-app.use("/api/settings", SettingRoutes);
-app.use("/api/printer", PrinterRoutes);
-app.use("/api/print", PrintRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/wishList", wishListRoutes);

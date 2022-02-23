@@ -1,7 +1,5 @@
 import moment from "moment";
-import Vendor from "../models/VendorModel.js";
-import Print from "../models/PrintModel.js";
-import Printer from "../models/PrinterModel.js";
+import asyncHandler from "express-async-handler";
 
 import User from "../models/UserModel.js";
 
@@ -9,9 +7,37 @@ const logs = async (req, res) => {
   try {
     console.log("req.query.searchString", req.query.searchString);
     const searchParam = req.query.searchString
-      ? { $text: { $search: req.query.searchString } }
+      ? // { $text: { $search: req.query.searchString } }
+        {
+          $or: [
+            {
+              firstName: {
+                $regex: `${req.query.searchString}`,
+                $options: "i"
+              }
+            },
+            {
+              lastName: {
+                $regex: `${req.query.searchString}`,
+                $options: "i"
+              }
+            },
+            {
+              email: {
+                $regex: `${req.query.searchString}`,
+                $options: "i"
+              }
+            }
+          ]
+        }
       : {};
-    const status_filter = req.query.status ? { status: req.query.status } : {};
+    let sort =
+      req.query.sort == "asc"
+        ? { createdAt: -1 }
+        : req.query.sort == "des"
+        ? { createdAt: 1 }
+        : { createdAt: 1 };
+
     const from = req.query.from;
     const to = req.query.to;
     let dateFilter = {};
@@ -19,30 +45,29 @@ const logs = async (req, res) => {
       dateFilter = {
         createdAt: {
           $gte: moment.utc(new Date(from)).startOf("day"),
-          $lte: moment.utc(new Date(to)).endOf("day"),
-        },
+          $lte: moment.utc(new Date(to)).endOf("day")
+        }
       };
 
-    const users = await User.paginate(
+    const user = await User.paginate(
       {
         ...searchParam,
-        ...status_filter,
-        ...dateFilter,
+        ...dateFilter
       },
       {
         page: req.query.page,
         limit: req.query.perPage,
         lean: true,
-        sort: "-_id",
+        sort: sort
       }
     );
     await res.status(200).json({
-      users,
+      user
     });
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: err.toString(),
+      message: err.toString()
     });
   }
 };
@@ -90,95 +115,34 @@ const getLatestUsers = async (req, res) => {
   }
 };
 
-const getCountofallCollection = async (req, res) => {
-  try {
-    const { year } = req.params;
-    const arr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    const start_date = moment(year).startOf("year").toDate();
-    const end_date = moment(year).endOf("year").toDate();
-    const query = [
-      {
-        $match: {
-          createdAt: {
-            $gte: start_date,
-            $lte: end_date,
-          },
-        },
-      },
-      {
-        $addFields: {
-          date: {
-            $month: "$createdAt",
-          },
-        },
-      },
-      {
-        $group: {
-          _id: "$date",
-          count: { $sum: "$totalcost" },
-        },
-      },
-      {
-        $addFields: {
-          month: "$_id",
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          month: 1,
-          count: 1,
-        },
-      },
-    ];
-    const [user, vendor, print, printer, allprinter, total_cost, salesCount] =
-      await Promise.all([
-        User.count(),
-        Vendor.count(),
-        Print.count(),
-        Printer.count(),
-        Printer.find(),
-        Print.aggregate([
-          {
-            $group: {
-              _id: 1,
-              count: { $sum: "$totalcost" },
-            },
-          },
-          {
-            $project: {
-              count: 1,
-            },
-          },
-        ]),
-        Print.aggregate(query),
-      ]);
+const editProfile = asyncHandler(async (req, res) => {
+  const { firstName, lastName, email } = req.body;
+  let user_image =
+    req.files &&
+    req.files.user_image &&
+    req.files.user_image[0] &&
+    req.files.user_image[0].path;
 
-    salesCount.forEach((data) => {
-      if (data) arr[data.month - 1] = data.count;
-    });
+  const user = await User.findOne({email});
+  user.firstName = firstName;
+  user.lastName = lastName;
+  user.email = email;
 
-    await res.status(201).json({
-      user,
-      vendor,
-      print,
-      printer,
-      allprinter,
-      total_cost,
-      graph_data: arr,
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      message: err.toString(),
-    });
-  }
-};
+  user.userImage = user_image ? user_image : user.userImage;
+  await user.save();
+  // await res.status(201).json({
+  //   message: "Admin Update",
+  //   admin,
+  // });
+  await res.status(201).json({
+    user
+  });
+});
 
 export {
   logs,
   toggleActiveStatus,
   getUserDetails,
   getLatestUsers,
-  getCountofallCollection,
+  editProfile
 };

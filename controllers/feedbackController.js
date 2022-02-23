@@ -1,6 +1,6 @@
 import Feedback from "../models/FeedbackModel.js";
 import generateEmail from "../services/generate_email.js";
-
+import moment from "moment";
 const createFeedback = async (req, res) => {
   console.log("recoverPassword");
   const { firstName, lastName, email, reasonforcontacting, message } = req.body;
@@ -15,72 +15,90 @@ const createFeedback = async (req, res) => {
   await generateEmail("info@yahkiawakened.com", "Yakhi - Contact Us", html);
 
   return res.status(201).json({
-    message: "Message sent successfully to Yakhi",
+    message: "Message sent successfully to Yakhi"
   });
 };
 
 const FeedbackLogs = async (req, res) => {
   try {
-    console.log('req.query.searchString', req.query.searchString)
+    console.log("req.query.searchString", req.query.searchString);
     const searchParam = req.query.searchString
       ? // { $text: { $search: req.query.searchString } }
         {
           $or: [
             {
-              categorytitle: {
+              firstName: {
                 $regex: `${req.query.searchString}`,
-                $options: 'i',
-              },
+                $options: "i"
+              }
             },
             {
-              subcategory: {
+              lastName: {
                 $regex: `${req.query.searchString}`,
-                $options: 'i',
-              },
+                $options: "i"
+              }
             },
-          ],
+            {
+              email: {
+                $regex: `${req.query.searchString}`,
+                $options: "i"
+              }
+            }
+          ]
         }
-      : {}
-    const status_filter = req.query.status ? { status: req.query.status } : {}
+      : {};
     let sort =
-    req.query.sort == "asc"
-      ? { createdAt: -1 }
-      : req.query.sort == "des"
-      ? { createdAt: 1 }
-      : { createdAt: 1 };
-    const from = req.query.from
-    const to = req.query.to
-    let dateFilter = {}
+      req.query.sort == "asc"
+        ? { createdAt: -1 }
+        : req.query.sort == "des"
+        ? { createdAt: 1 }
+        : { createdAt: 1 };
+
+    const from = req.query.from;
+    const to = req.query.to;
+    let dateFilter = {};
     if (from && to)
       dateFilter = {
         createdAt: {
-          $gte: moment.utc(new Date(from)).startOf('day'),
-          $lte: moment.utc(new Date(to)).endOf('day'),
-        },
-      }
+          $gte: moment.utc(new Date(from)).startOf("day"),
+          $lte: moment.utc(new Date(to)).endOf("day")
+        }
+      };
 
-    const category = await Category.paginate(
+    const feedback = await Feedback.paginate(
       {
         ...searchParam,
-        ...status_filter,
-        ...dateFilter,
+        ...dateFilter
       },
       {
         page: req.query.page,
         limit: req.query.perPage,
         lean: true,
-        sort:sort,
+        sort: sort
       }
-    )
+    );
     await res.status(200).json({
-      category,
-    })
+      feedback
+    });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).json({
-      message: err.toString(),
-    })
+      message: err.toString()
+    });
   }
-}
+};
 
-export { createFeedback,FeedbackLogs };
+const getFeedbackDetails = async (req, res) => {
+  try {
+    const feedback = await Feedback.findById(req.params.id);
+    await res.status(201).json({
+      feedback
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
+export { createFeedback, FeedbackLogs, getFeedbackDetails };

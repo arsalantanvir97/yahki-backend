@@ -3,7 +3,6 @@ import asyncHandler from "express-async-handler";
 import Admin from "../models/AdminModel.js";
 import Reset from "../models/ResetModel.js";
 import User from "../models/UserModel.js";
-import Vendor from "../models/VendorModel.js";
 
 import generateToken from "../utills/generateJWTtoken.js";
 import generateEmail from "../services/generate_email.js";
@@ -122,8 +121,6 @@ const recoverPassword = asyncHandler(async (req, res) => {
   }
 });
 
-
-
 const adminverifyRecoverCode = async (req, res) => {
   const { code, email } = req.body;
   console.log("req.body", req.body);
@@ -172,7 +169,7 @@ const adminresetPassword = async (req, res) => {
         lastName: updatedadmin.lastName,
         email: updatedadmin.email,
         userImage: updatedadmin.userImage,
-  
+
         token: generateToken(updatedadmin._id)
       });
     }
@@ -186,7 +183,6 @@ const adminresetPassword = async (req, res) => {
   //   message: "Password Updated",
   // });
 };
-
 
 const resetPassword = async (req, res) => {
   try {
@@ -269,7 +265,8 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     firstName,
     email,
-    password
+    password,
+    type: "User"
   });
   console.log("user", user);
   if (user) {
@@ -309,52 +306,6 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-const registerVendor = asyncHandler(async (req, res) => {
-  const {
-    firstName,
-    lastName,
-    email,
-    password,
-    address,
-    printerLocation,
-    phone
-  } = req.body;
-
-  const VendorExists = await Vendor.findOne({ email });
-
-  if (VendorExists) {
-    res.status(400);
-    throw new Error("vendor already exists");
-  }
-
-  const vendor = await Vendor.create({
-    firstName,
-    lastName,
-    email,
-    password,
-    address,
-    printerLocation,
-    phone
-  });
-  console.log("vendor", vendor);
-  if (vendor) {
-    res.status(201).json({
-      _id: vendor._id,
-      firstName: vendor.firstName,
-      lastName: vendor.lastName,
-      email: vendor.email,
-      address: vendor.address,
-      printerLocation: vendor.printerLocation,
-      phone: vendor.phone,
-
-      token: generateToken(vendor._id)
-    });
-  } else {
-    res.status(400);
-    throw new Error("Invalid vendor data");
-  }
-});
-
 const verifyAndREsetPassword = async (req, res) => {
   try {
     console.log("reset");
@@ -376,12 +327,12 @@ const verifyAndREsetPassword = async (req, res) => {
         console.log("admin", admin);
         res.status(201).json({
           _id: admin._id,
-      firstName: admin.firstName,
-      lastName: admin.lastName,
-      email: admin.email,
-      userImage: admin.userImage,
+          firstName: admin.firstName,
+          lastName: admin.lastName,
+          email: admin.email,
+          userImage: admin.userImage,
 
-      token: generateToken(admin._id)
+          token: generateToken(admin._id)
         });
       }
     } else {
@@ -400,6 +351,38 @@ const verifyAndREsetPassword = async (req, res) => {
   // });
 };
 
+const registerUserbyAdmin = asyncHandler(async (req, res) => {
+  const { password, email, confirmpassword, firstName, lastName } = req.body;
+
+  if (!comparePassword(password, confirmpassword))
+    return res.status(400).json({ message: "Password does not match" });
+
+  const UserExists = await User.findOne({ email });
+
+  if (UserExists) {
+    res.status(400);
+    throw new Error("User already exists");
+  }
+
+  const user = await User.create({
+    firstName,
+    lastName,
+    email,
+    password,
+    type: "Admin"
+  });
+  console.log("user", user);
+  if (user) {
+    res.status(201).json({
+      user
+    });
+  } else {
+    
+    res.status(400);
+    throw new Error("Invalid user data");
+  }
+});
+
 export {
   registerAdmin,
   authAdmin,
@@ -409,9 +392,9 @@ export {
   editProfile,
   registerUser,
   authUser,
-  registerVendor,
   adminRecoverPassword,
   verifyAndREsetPassword,
   adminverifyRecoverCode,
-  adminresetPassword
+  adminresetPassword,
+  registerUserbyAdmin
 };
