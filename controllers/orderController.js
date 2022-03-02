@@ -1,6 +1,8 @@
 import Order from "../models/OrderModel.js";
 import Mongoose from "mongoose";
 import moment from "moment";
+import User from "../models/UserModel.js";
+import CreateNotification from "../utills/notification.js";
 
 const addOrderItems = async (req, res) => {
   const {
@@ -29,7 +31,17 @@ const addOrderItems = async (req, res) => {
       shippingPrice,
       totalPrice
     });
-
+    const notification = {
+      notifiableId: null,
+      notificationType: "Admin",
+      title: `Order Created`,
+      body: `An order of id ${order._id} has been created by a user having id ${userid} `,
+      payload: {
+        type: "USER",
+        id: userid
+      }
+    };
+    CreateNotification(notification);
     const createdOrder = await order.save();
 
     res.status(200).json(createdOrder);
@@ -50,6 +62,7 @@ const updateOrderToPaid = async (req, res) => {
   const order = await Order.findById(req.params.id);
 
   if (order) {
+   
     order.isPaid = true;
     order.status = "Paid";
 
@@ -185,4 +198,106 @@ console.log('orderorder',order)
   }
 };
 
-export { addOrderItems, getOrderById, updateOrderToPaid, orderlogs, logs ,updateOrderToDelivered};
+const getCountofallCollection = async (req, res) => {
+  try {
+    const { year } = req.params;
+    const yearuser = req.query.year ? req.query.year : [];
+
+    const arr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const start_date = moment(yearuser).startOf("year").toDate();
+    const end_date = moment(yearuser).endOf("year").toDate();
+    const query = [
+      {
+        $match: {
+          createdAt: {
+            $gte: start_date,
+            $lte: end_date
+          },
+          isPaid: true
+        }
+      },
+      {
+        $addFields: {
+          date: {
+            $month: "$createdAt"
+          }
+        }
+      },
+      {
+        $group: {
+          _id: "$date",
+          count: { $sum: "$totalPrice" }
+        }
+      },
+      {
+        $addFields: {
+          month: "$_id"
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          month: 1,
+          count: 1
+        }
+      }
+    ];
+    const [user, orderr, salesCount,totalcost] =
+      await Promise.all([
+        User.count(),
+        Order.count(),
+        Order.aggregate(query),
+        Order.aggregate([
+          {
+            $match: {
+             
+              isPaid: true
+            }
+          },
+          {
+            $group: {
+              _id: 1,
+            
+              countt: { $sum: "$totalPrice" }
+            }
+          },
+          {
+            $project: {
+              countt: 1
+            }
+          }
+        ]),
+
+      ]);
+    console.log("salesCount", salesCount);
+    salesCount.forEach((data) => {
+      if (data) arr[data.month - 1] = data.count;
+    });
+
+    await res.status(201).json({
+      user, orderr,
+      graph_data: arr,
+      totalcost
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const getLatestOrders = async (req, res) => {
+  try {
+    const order = await Order.find().sort({ $natural: -1 }).limit(3).populate('user');
+
+    await res.status(201).json({
+      order
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
+export { addOrderItems, getOrderById, updateOrderToPaid, orderlogs, logs ,updateOrderToDelivered,getCountofallCollection,getLatestOrders};

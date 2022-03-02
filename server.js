@@ -19,6 +19,7 @@ import wishListRoutes from "./routes/wishListRoutes";
 import documentRoutes from "./routes/documentRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
 import taxRoutes from "./routes/taxRoutes";
+import notificationRoutes from "./routes/notificationRoutes";
 
 
 import { v4 as uuidv4 } from "uuid";
@@ -135,6 +136,7 @@ app.use("/api/wishList", wishListRoutes);
 app.use("/api/document", documentRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/tax", taxRoutes);
+app.use("/api/notification", notificationRoutes);
 
 
 const __dirname = path.resolve();

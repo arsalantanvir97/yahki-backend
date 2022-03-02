@@ -13,6 +13,7 @@ import {
   comparePassword,
   generateHash
 } from "../queries";
+import CreateNotification from "../utills/notification.js";
 
 const registerAdmin = asyncHandler(async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -270,6 +271,18 @@ const registerUser = asyncHandler(async (req, res) => {
   });
   console.log("user", user);
   if (user) {
+    const notification = {
+      notifiableId: null,
+      notificationType: "Admin",
+      title: `User Created`,
+      body: `A user just registered on our app by name of ${firstName}`,
+      payload: {
+        type: "USER",
+        id: user._id
+      }
+    };
+    CreateNotification(notification);
+
     res.status(201).json({
       _id: user._id,
       firstName: user.firstName,
