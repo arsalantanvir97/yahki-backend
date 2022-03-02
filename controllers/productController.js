@@ -1,9 +1,18 @@
+import Mongoose from "mongoose";
 import Category from "../models/CategoryModel";
 import Product from "../models/ProductModel";
 
 const createProduct = async (req, res) => {
-  const { category, name, price, status, description, quantityrange, id } =
-    req.body;
+  const {
+    category,
+    name,
+    price,
+    status,
+    description,
+    quantityrange,
+    id,
+    countInStock
+  } = req.body;
   let _reciepts = [];
   const reciepts = [];
   _reciepts = req.files.reciepts;
@@ -17,6 +26,7 @@ const createProduct = async (req, res) => {
       category,
       description,
       status: status,
+      countInStock: countInStock,
       pricerange: JSON.parse(quantityrange),
       productimage: reciepts
     });
@@ -76,7 +86,9 @@ const getProductDetails = async (req, res) => {
 const detoxProducts = async (req, res) => {
   console.log("req.body.category", req.body.category);
   try {
-    const detoxproduct = await Product.find({ category: req.body.category });
+    const detoxcategory = await Category.findOne({ categorytitle:'Detox'  });
+
+    const detoxproduct = await Product.find({ category:detoxcategory._id  });
     console.log("detoxproduct", detoxproduct);
     await res.status(201).json({
       detoxproduct
@@ -101,9 +113,6 @@ const productlogs = async (req, res) => {
       : {};
 
     const status_filter = req.query.status ? { status: req.query.status } : {};
-    const category_filter = req.query.category
-      ? { category: req.query.category }
-      : {};
 
     // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
     const from = req.query.from;
@@ -143,13 +152,20 @@ const productlogs = async (req, res) => {
           $lte: priceto
         } // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
       };
+    let cat_filter = {};
 
-    // console.log("req.params.id", req.params.id);
+    if (req.query.category) {
+      console.log("req.params.category", req.params.category);
+      cat_filter = {
+        category: Mongoose.mongo.ObjectId(req.query.category)
+      };
+    }
     const product = await Product.paginate(
       {
+        ...cat_filter,
+
         ...pricerange,
         // ...latestfilter,
-        ...category_filter,
         ...searchParam,
         ...status_filter,
         ...dateFilter
@@ -399,7 +415,8 @@ const editProduct = async (req, res) => {
       category,
       description,
       quantityrange,
-      images
+      images,
+      countInStock
     } = req.body;
     let _reciepts = [];
     const reciepts = [];
@@ -421,6 +438,7 @@ const editProduct = async (req, res) => {
     const product = await Product.findOne({ _id: id });
     product.name = name ? name : product.name;
     product.price = price ? price : product.price;
+    product.countInStock = countInStock ? countInStock : product.countInStock;
     product.status = status ? status : product.status;
     product.category = category ? category : product.category;
     product.pricerange = quantityrange

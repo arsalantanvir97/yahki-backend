@@ -36,10 +36,7 @@ const WishListSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    weight: {
-        type: Number,
-        required: true,
-      },
+   
     category: {
       type: String,
       required: true,

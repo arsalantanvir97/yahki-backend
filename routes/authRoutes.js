@@ -32,7 +32,7 @@ router.post("/adminresetPassword", adminresetPassword);
 
 router.post("/editProfile", editProfile);
 router.post("/registerUser", registerUser);
-router.post("/registerUserbyAdmin", registerUserbyAdmin);
+router.post("/registerUserbyAdmin",protect, registerUserbyAdmin);
 
 router.post("/authUser", authUser);
 router.post("/verifyAndREsetPassword", protect, verifyAndREsetPassword);

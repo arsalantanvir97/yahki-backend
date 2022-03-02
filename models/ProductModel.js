@@ -30,7 +30,7 @@ const ProductSchema = mongoose.Schema(
     productimage: {
       type: Array
     },
-  
+
     pricerange: {
       type: Array
     },
@@ -48,23 +48,17 @@ const ProductSchema = mongoose.Schema(
     reviews: [ReviewSchema],
     rating: {
       type: Number,
-
       default: 0
     },
     numReviews: {
       type: Number,
-
       default: 0
     },
     price: {
-      type: Number,
-
-      
+      type: Number
     },
     countInStock: {
-      type: Number,
-
-      
+      type: Number
     }
   },
   {

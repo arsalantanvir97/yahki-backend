@@ -360,8 +360,7 @@ const registerUserbyAdmin = asyncHandler(async (req, res) => {
   const UserExists = await User.findOne({ email });
 
   if (UserExists) {
-    res.status(400);
-    throw new Error("User already exists");
+    return res.status(400).json({ message: "User already exists" });
   }
 
   const user = await User.create({
@@ -377,7 +376,6 @@ const registerUserbyAdmin = asyncHandler(async (req, res) => {
       user
     });
   } else {
-    
     res.status(400);
     throw new Error("Invalid user data");
   }

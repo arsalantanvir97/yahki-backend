@@ -22,7 +22,7 @@ router.get("/getProductDetails/:id", getProductDetails);
 router.get("/getlimitedProducts", getlimitedProducts);
 router.get("/toggle-active/:id", protect, toggleActiveStatus);
 
-router.post("/detoxProducts", detoxProducts);
+router.get("/detoxProducts", detoxProducts);
 router.post("/editProduct", protect,editProduct);
 
 

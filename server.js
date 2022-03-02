@@ -18,6 +18,8 @@ import orderRoutes from "./routes/orderRoutes";
 import wishListRoutes from "./routes/wishListRoutes";
 import documentRoutes from "./routes/documentRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
+import taxRoutes from "./routes/taxRoutes";
+
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -132,6 +134,8 @@ app.use("/api/order", orderRoutes);
 app.use("/api/wishList", wishListRoutes);
 app.use("/api/document", documentRoutes);
 app.use("/api/category", categoryRoutes);
+app.use("/api/tax", taxRoutes);
+
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));

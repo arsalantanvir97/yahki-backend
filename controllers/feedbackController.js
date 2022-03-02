@@ -100,5 +100,15 @@ const getFeedbackDetails = async (req, res) => {
     });
   }
 };
-
-export { createFeedback, FeedbackLogs, getFeedbackDetails };
+const deleteFeedback = async (req, res) => {
+  try {
+    console.log('deleteFeedback',req.params.id)
+    const feedback = await Feedback.findByIdAndRemove(req.params.id);
+    return res.status(200).json({ message: "Feedback deleted" });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString(),
+    });
+  }
+};
+export { createFeedback, FeedbackLogs, getFeedbackDetails,deleteFeedback };
