@@ -20,6 +20,7 @@ import documentRoutes from "./routes/documentRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
 import taxRoutes from "./routes/taxRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
+import consultationRoutes from "./routes/consultationRoutes";
 
 
 import { v4 as uuidv4 } from "uuid";
@@ -56,7 +57,8 @@ app.use(express.json());
 app.use(logger("dev"));
 
 app.use(
-  multer({
+  multer(
+    {
     storage: fileStorage,
     fileFilter: fileFilter
   }).fields([
@@ -137,6 +139,7 @@ app.use("/api/document", documentRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/tax", taxRoutes);
 app.use("/api/notification", notificationRoutes);
+app.use("/api/consultationRoutes", consultationRoutes);
 
 
 const __dirname = path.resolve();

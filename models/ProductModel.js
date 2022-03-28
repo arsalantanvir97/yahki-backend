@@ -27,6 +27,9 @@ const ProductSchema = mongoose.Schema(
     name: {
       type: String
     },
+    visible: {
+      type: Boolean
+    },
     productimage: {
       type: Array
     },

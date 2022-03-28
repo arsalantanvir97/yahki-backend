@@ -7,10 +7,9 @@ const createProduct = async (req, res) => {
     category,
     name,
     price,
-    status,
     description,
-    quantityrange,
     id,
+    visible,
     countInStock
   } = req.body;
   let _reciepts = [];
@@ -24,10 +23,9 @@ const createProduct = async (req, res) => {
       name,
       price: Number(price),
       category,
+      visible,
       description,
-      status: status,
       countInStock: countInStock,
-      pricerange: JSON.parse(quantityrange),
       productimage: reciepts
     });
     console.log("product", product);
@@ -411,10 +409,9 @@ const editProduct = async (req, res) => {
       id,
       name,
       price,
-      status,
+      visible,
       category,
       description,
-      quantityrange,
       images,
       countInStock
     } = req.body;
@@ -434,16 +431,13 @@ const editProduct = async (req, res) => {
         reciepts.push(imgg);
       });
     console.log("block2", reciepts);
-    console.log(quantityrange ? "yes" : "no");
     const product = await Product.findOne({ _id: id });
     product.name = name ? name : product.name;
     product.price = price ? price : product.price;
     product.countInStock = countInStock ? countInStock : product.countInStock;
-    product.status = status ? status : product.status;
+    product.visible = visible ? visible : product.visible;
     product.category = category ? category : product.category;
-    product.pricerange = quantityrange
-      ? JSON.parse(quantityrange)
-      : product.pricerange;
+   
     product.description = description ? description : product.description;
 
     product.productimage =
@@ -461,6 +455,22 @@ const editProduct = async (req, res) => {
     });
   }
 };
+const getproductsbycategoryid = async (req, res) => {
+  try {
+    const products = await Product.find({category:req.params.id});
+    console.log("products", products);
+  
+      res.status(201).json({
+        products
+      });
+  
+  } catch (err) {
+    console.log("err", err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 export {
   createProduct,
   getproducts,
@@ -472,5 +482,6 @@ export {
   getlimitedProducts,
   productlogsofAdmin,
   toggleActiveStatus,
-  editProduct
+  editProduct,
+  getproductsbycategoryid
 };
