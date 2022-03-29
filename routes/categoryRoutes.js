@@ -8,7 +8,7 @@ import {
   getCategoryDetails,
   editCategory,
   allOfCategories,
-  getCategoryDetailsanditsProduct
+  getCategoryDetailsanditsProduct,getGeoGeneticsCategory
 } from "../controllers/categoryController";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -23,5 +23,6 @@ router.get(
 );
 router.post("/editCategory", protect, editCategory);
 router.get("/allOfCategories", allOfCategories);
+router.get("/getGeoGeneticsCategory",protect, getGeoGeneticsCategory);
 
 export default router;

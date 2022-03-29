@@ -46,7 +46,8 @@ const ProductSchema = mongoose.Schema(
       type: String
     },
     status: {
-      type: Boolean
+      type: Boolean,
+      default:true
     },
     reviews: [ReviewSchema],
     rating: {

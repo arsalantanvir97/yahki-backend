@@ -185,6 +185,22 @@ const allOfCategories = async (req, res) => {
     })
   }
 }
+const getGeoGeneticsCategory = async (req, res) => {
+  try {
+    const getAllCategories = await Category.findOne({categorytitle:`Geo'Genetics`})
+    console.log('getAllCategories', getAllCategories)
+    if (getAllCategories) {
+      res.status(201).json({
+        getAllCategories,
+      })
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString(),
+    })
+  }
+}
+
 const getCategoryDetailsanditsProduct = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id)
@@ -207,5 +223,6 @@ export {
   getCategoryDetails,
   editCategory,
   allOfCategories,
-  getCategoryDetailsanditsProduct
+  getCategoryDetailsanditsProduct,
+  getGeoGeneticsCategory
 }

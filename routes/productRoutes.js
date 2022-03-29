@@ -13,7 +13,9 @@ import {
   toggleActiveStatus,
   deleteProduct,
   editProduct,
-  getproductsbycategoryid
+  getproductsbycategoryid,
+  geoGeneticslogs,
+  productsbycategoryid
 } from "../controllers/productController";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -29,8 +31,13 @@ router.post("/editProduct", protect,editProduct);
 
 router.get("/productlogs", productlogs);
 router.get("/productlogsofAdmin", productlogsofAdmin);
+router.get("/geoGeneticslogs", geoGeneticslogs);
+
+
 router.get('/deleteProduct/:id', protect, deleteProduct)
 router.get('/getproductsbycategoryid/:id', getproductsbycategoryid)
+router.get('/productsbycategoryid', productsbycategoryid)
+
 
 
 router.get("/productbycategorylogs/:id", productbycategorylogs);

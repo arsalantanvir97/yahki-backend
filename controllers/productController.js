@@ -3,15 +3,8 @@ import Category from "../models/CategoryModel";
 import Product from "../models/ProductModel";
 
 const createProduct = async (req, res) => {
-  const {
-    category,
-    name,
-    price,
-    description,
-    id,
-    visible,
-    countInStock
-  } = req.body;
+  const { category, name, price, description, id, visible, countInStock } =
+    req.body;
   let _reciepts = [];
   const reciepts = [];
   _reciepts = req.files.reciepts;
@@ -84,9 +77,9 @@ const getProductDetails = async (req, res) => {
 const detoxProducts = async (req, res) => {
   console.log("req.body.category", req.body.category);
   try {
-    const detoxcategory = await Category.findOne({ categorytitle:'Detox'  });
+    const detoxcategory = await Category.findOne({ categorytitle: "Detox" });
 
-    const detoxproduct = await Product.find({ category:detoxcategory._id  });
+    const detoxproduct = await Product.find({ category: detoxcategory._id });
     console.log("detoxproduct", detoxproduct);
     await res.status(201).json({
       detoxproduct
@@ -197,6 +190,7 @@ const productlogsofAdmin = async (req, res) => {
           ]
         }
       : {};
+    console.log("req.query.geogeneticscategory", req.query.geogeneticscategory);
 
     const status_filter = req.query.status ? { status: req.query.status } : {};
     const category_filter = req.query.category
@@ -240,7 +234,7 @@ const productlogsofAdmin = async (req, res) => {
     const product = await Product.paginate(
       {
         ...pricerange,
-        // ...latestfilter,
+        category: { $ne: Mongoose.mongo.ObjectId(req.query.geogeneticscategory) },
         ...category_filter,
         ...searchParam,
         ...status_filter,
@@ -264,7 +258,82 @@ const productlogsofAdmin = async (req, res) => {
     });
   }
 };
+const geoGeneticslogs = async (req, res) => {
+  try {
+    console.log("req.query.searchString", req.query.searchString);
+    const searchParam = req.query.searchString
+      ? // { $text: { $search: req.query.searchString } }
+        {
+          $or: [
+            { name: { $regex: `${req.query.searchString}`, $options: "i" } }
+          ]
+        }
+      : {};
 
+    const status_filter = req.query.status ? { status: req.query.status } : {};
+
+    // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
+    const from = req.query.from;
+    const to = req.query.to;
+    let dateFilter = {};
+    if (from && to)
+      dateFilter = {
+        createdAt: {
+          $gte: moment.utc(new Date(from)).startOf("day"),
+          $lte: moment.utc(new Date(to)).endOf("day")
+        } // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
+      };
+    // const lowprice=req.query.lowerprice ? { "$sort": { "price": 1 } } : {};
+
+    let sort =
+      req.query.sort == "asc"
+        ? { createdAt: -1 }
+        : req.query.sort == "des"
+        ? { createdAt: 1 }
+        : { createdAt: 1 };
+
+    // console.log('lowprice',lowprice)
+    console.log("sort", sort);
+    const pricefrom = req.query.pricefrom;
+    const priceto = req.query.priceto;
+    let pricerange = {};
+    if (pricefrom && priceto)
+      pricerange = {
+        price: {
+          $gte: pricefrom,
+          $lte: priceto
+        } // const latestfilter=req.query.latestfilter ? { createdAt: req.query.latestfilter } : {};
+      };
+    console.log("req.params.id", req.query.id);
+    // console.log("req.params.id", req.params.id);
+    const product = await Product.paginate(
+      {
+        category: Mongoose.mongo.ObjectId(req.query.id),
+
+        ...pricerange,
+        // ...latestfilter,
+        ...searchParam,
+        ...status_filter,
+        ...dateFilter
+      },
+      {
+        page: req.query.page,
+        limit: req.query.perPage,
+        lean: true,
+        sort: sort,
+        populate: "category"
+      }
+    );
+    await res.status(200).json({
+      product
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 const productbycategorylogs = async (req, res) => {
   try {
     console.log("req.query.searchString", req.query.searchString);
@@ -353,7 +422,7 @@ const productbycategorylogs = async (req, res) => {
 
 const getlimitedProducts = async (req, res) => {
   try {
-    const products = await Product.find().sort({ $natural: -1 }).limit(5);
+    const products = await Product.find({visible:true}).sort({ $natural: -1 }).limit(5);
 
     console.log("products", products);
     if (products) {
@@ -437,7 +506,7 @@ const editProduct = async (req, res) => {
     product.countInStock = countInStock ? countInStock : product.countInStock;
     product.visible = visible ? visible : product.visible;
     product.category = category ? category : product.category;
-   
+
     product.description = description ? description : product.description;
 
     product.productimage =
@@ -457,13 +526,34 @@ const editProduct = async (req, res) => {
 };
 const getproductsbycategoryid = async (req, res) => {
   try {
-    const products = await Product.find({category:req.params.id});
+    const products = await Product.find({ category: req.params.id });
     console.log("products", products);
-  
-      res.status(201).json({
-        products
-      });
-  
+
+    res.status(201).json({
+      products
+    });
+  } catch (err) {
+    console.log("err", err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
+const productsbycategoryid = async (req, res) => {
+  console.log('req.params.id',req.query)
+  try {
+    const products = await Product.find(
+      {
+        "category": { "$eq": req.query.id },
+        "_id": { "$ne": req.query.productid }
+    }
+    ).populate("category");
+    console.log("products", products);
+
+    res.status(201).json({
+      products
+    });
   } catch (err) {
     console.log("err", err);
     res.status(500).json({
@@ -483,5 +573,7 @@ export {
   productlogsofAdmin,
   toggleActiveStatus,
   editProduct,
-  getproductsbycategoryid
+  getproductsbycategoryid,
+  geoGeneticslogs,
+  productsbycategoryid
 };
