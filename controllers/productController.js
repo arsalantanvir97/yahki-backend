@@ -648,8 +648,8 @@ const searchProductlogs = async (req, res) => {
                 return prodddd;
               });
             } else {
-              console.log("elseblock");
-              productbystatee.push({ ord, state: abcc._id });
+              ord.name.toLowerCase().includes(searchString.toLowerCase()) &&
+                productbystatee.push({ ord, state: abcc._id });
             }
           })
         );
