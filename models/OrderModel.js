@@ -91,6 +91,8 @@ const OrderSchema = mongoose.Schema(
     deliveredAt: {
       type: Date,
     },
+    isGeoGenetics:{type:Boolean,default:false},
+    governmentid: { type: String },
   },
   {
     timestamps: true,

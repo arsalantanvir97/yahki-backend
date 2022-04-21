@@ -13,28 +13,36 @@ import {
   adminRecoverPassword,
   adminverifyRecoverCode,
   adminresetPassword,
-  registerUserbyAdmin
+  registerUserbyAdmin,emailLogin,registerAdminbyAdmin,adminlogs,adminDetails,deleteAdmin
 } from "../controllers/authController.js";
 import { protect } from "../middlewares/authMiddleware";
 
 router.post("/adminRegister", registerAdmin);
+router.post("/registerAdminbyAdmin", protect,registerAdminbyAdmin);
+
+
 router.post("/adminAuth", authAdmin);
 router.post("/userRecoverPassword", recoverPassword);
 router.post("/adminRecoverPassword", adminRecoverPassword);
+router.get("/adminlogs",protect, adminlogs);
 
 router.post("/userverifyRecoverCode", verifyRecoverCode);
 router.post("/adminverifyRecoverCode", adminverifyRecoverCode);
+router.get("/deleteAdmin/:id", deleteAdmin);
 
 
 router.post("/userresetPassword", resetPassword);
 router.post("/adminresetPassword", adminresetPassword);
 
+router.get("/admin-details/:id",adminDetails);
 
 router.post("/editProfile", editProfile);
 router.post("/registerUser", registerUser);
 router.post("/registerUserbyAdmin",protect, registerUserbyAdmin);
 
 router.post("/authUser", authUser);
+router.post("/emailLogin", emailLogin);
+
 router.post("/verifyAndREsetPassword", protect, verifyAndREsetPassword);
 
 export default router;

@@ -1,5 +1,6 @@
 import Consultation from "../models/ConsultationModel";
 import CreateNotification from "../utills/notification";
+import Mongoose from "mongoose";
 
 const createConsultation = async (req, res) => {
   try {
@@ -76,63 +77,143 @@ const createConsultation = async (req, res) => {
 };
 
 const logs = async (req, res) => {
-    try {
-      console.log("req.query.searchString", req.query.searchString);
-      const searchParam = req.query.searchString
+  try {
+    console.log("req.query.searchString", req.query.searchString);
+    const searchParam = req.query.searchString
       ? { $text: { $search: req.query.searchString } }
       : {};
-      let sort =
-        req.query.sort == "asc"
-          ? { createdAt: -1 }
-          : req.query.sort == "des"
-          ? { createdAt: 1 }
-          : { createdAt: 1 };
-  
-      const from = req.query.from;
-      const to = req.query.to;
-      let dateFilter = {};
-      if (from && to)
-        dateFilter = {
-          createdAt: {
-            $gte: moment.utc(new Date(from)).startOf("day"),
-            $lte: moment.utc(new Date(to)).endOf("day")
-          }
-        };
-  
-      const consultation = await Consultation.paginate(
-        {
-          ...searchParam,
-          ...dateFilter
-        },
-        {
-          page: req.query.page,
-          limit: req.query.perPage,
-          lean: true,
-          sort: sort,
-          populate: "user"
-        }
-      );
-      await res.status(200).json({
-        consultation
-      });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({
-        message: err.toString()
-      });
-    }
-  };
-  const getConsultationDetails = async (req, res) => {
-    try {
-      const consultation = await Consultation.findById(req.params.id);
-      await res.status(201).json({
-        consultation
-      });
-    } catch (err) {
-      res.status(500).json({
-        message: err.toString()
-      });
-    }
-  };
+    let sort =
+      req.query.sort == "asc"
+        ? { createdAt: -1 }
+        : req.query.sort == "des"
+        ? { createdAt: 1 }
+        : { createdAt: 1 };
 
-export { createConsultation,logs,getConsultationDetails };
+    const from = req.query.from;
+    const to = req.query.to;
+    let dateFilter = {};
+    if (from && to)
+      dateFilter = {
+        createdAt: {
+          $gte: moment.utc(new Date(from)).startOf("day"),
+          $lte: moment.utc(new Date(to)).endOf("day")
+        }
+      };
+
+    const consultation = await Consultation.paginate(
+      {
+        ...searchParam,
+        ...dateFilter
+      },
+      {
+        page: req.query.page,
+        limit: req.query.perPage,
+        lean: true,
+        sort: sort,
+        populate: "user"
+      }
+    );
+    await res.status(200).json({
+      consultation
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const userlogs = async (req, res) => {
+  try {
+    console.log("req.query.searchString", req.query.searchString);
+    const searchParam = req.query.searchString
+      ? { $text: { $search: req.query.searchString } }
+      : {};
+    let sort =
+      req.query.sort == "asc"
+        ? { createdAt: -1 }
+        : req.query.sort == "des"
+        ? { createdAt: 1 }
+        : { createdAt: 1 };
+
+    const from = req.query.from;
+    const to = req.query.to;
+    let dateFilter = {};
+    if (from && to)
+      dateFilter = {
+        createdAt: {
+          $gte: moment.utc(new Date(from)).startOf("day"),
+          $lte: moment.utc(new Date(to)).endOf("day")
+        }
+      };
+
+    const consultation = await Consultation.paginate(
+      { user: Mongoose.mongo.ObjectId(req.query.id),
+        ...searchParam,
+        ...dateFilter
+      },
+      {
+        page: req.query.page,
+        limit: req.query.perPage,
+        lean: true,
+        sort: sort,
+        populate: "user"
+      }
+    );
+    await res.status(200).json({
+      consultation
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const getConsultationDetails = async (req, res) => {
+  try {
+    const consultation = await Consultation.findById(req.params.id);
+    await res.status(201).json({
+      consultation
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const updateStatus = async (req, res) => {
+  const { status } = req.body;
+  try {
+    console.log("updateStatusupdateStatus");
+    const consultation = await Consultation.findById(req.params.id);
+    consultation.status = status;
+    const notification = {
+      notifiableId: consultation.user,
+      notificationType: "USER",
+      title: `Appointment Status Updated`,
+      body: `Admin has updated status of your appointment to ${status}`,
+      payload: {
+        type: "USER",
+        id: consultation.user
+      }
+    };
+    await consultation.save();
+    CreateNotification(notification);
+    await res.status(201).json({
+      consultation
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
+export {
+  createConsultation,
+  logs,
+  getConsultationDetails,
+  updateStatus,
+  userlogs
+};

@@ -14,7 +14,7 @@ const ConsultationSchema = mongoose.Schema(
       ref: "User"
     },
     governmentid: { type: String },
-    // status: { type: String, default: "Pending" }
+    status: { type: String, default: "Pending" }
   },
   {
     timestamps: true

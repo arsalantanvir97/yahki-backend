@@ -1,5 +1,6 @@
 import Mongoose from "mongoose";
 import Category from "../models/CategoryModel";
+import Order from "../models/OrderModel";
 import Product from "../models/ProductModel";
 
 const createProduct = async (req, res) => {
@@ -73,7 +74,20 @@ const getProductDetails = async (req, res) => {
     });
   }
 };
-
+const getProductDetailsByName = async (req, res) => {
+  try {
+    const product = await Product.findOne({ name: req.params.id }).populate(
+      "category"
+    );
+    await res.status(201).json({
+      product
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 const detoxProducts = async (req, res) => {
   console.log("req.body.category", req.body.category);
   try {
@@ -90,7 +104,26 @@ const detoxProducts = async (req, res) => {
     });
   }
 };
+const geoGeneticsProducts = async (req, res) => {
+  console.log("req.body.category", req.body.category);
+  try {
+    const geoGeneticscategory = await Category.findOne({
+      categorytitle: "Geo'Genetics"
+    });
 
+    const geoGeneticsproduct = await Product.find({
+      category: geoGeneticscategory._id
+    });
+    console.log("geoGeneticsproduct", geoGeneticsproduct);
+    await res.status(201).json({
+      geoGeneticsproduct
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 const productlogs = async (req, res) => {
   try {
     console.log("req.query.searchString", req.query.searchString);
@@ -234,7 +267,9 @@ const productlogsofAdmin = async (req, res) => {
     const product = await Product.paginate(
       {
         ...pricerange,
-        category: { $ne: Mongoose.mongo.ObjectId(req.query.geogeneticscategory) },
+        category: {
+          $ne: Mongoose.mongo.ObjectId(req.query.geogeneticscategory)
+        },
         ...category_filter,
         ...searchParam,
         ...status_filter,
@@ -422,7 +457,9 @@ const productbycategorylogs = async (req, res) => {
 
 const getlimitedProducts = async (req, res) => {
   try {
-    const products = await Product.find({visible:true}).sort({ $natural: -1 }).limit(5);
+    const products = await Product.find({ visible: true })
+      .sort({ $natural: -1 })
+      .limit(5);
 
     console.log("products", products);
     if (products) {
@@ -460,9 +497,13 @@ const toggleActiveStatus = async (req, res) => {
 };
 const deleteProduct = async (req, res) => {
   try {
-    await Product.findByIdAndRemove(req.params.id);
     const product = await Product.findOne({ _id: req.params.id });
+    console.log("block1");
     const cat = await Category.findOne({ _id: product.category });
+    console.log("block2");
+    await Product.findByIdAndRemove(req.params.id);
+    console.log("block3");
+
     cat.coursecount = cat.coursecount - 1;
     await cat.save();
     return res.status(201).json({ message: "Product Deleted" });
@@ -541,14 +582,14 @@ const getproductsbycategoryid = async (req, res) => {
 };
 
 const productsbycategoryid = async (req, res) => {
-  console.log('req.params.id',req.query)
+  console.log("req.params.id", req.query);
   try {
-    const products = await Product.find(
-      {
-        "category": { "$eq": req.query.id },
-        "_id": { "$ne": req.query.productid }
-    }
-    ).populate("category");
+    const products = await Product.find({
+      category: { $eq: req.query.id },
+      _id: { $ne: req.query.productid }
+    })
+      .populate("category")
+      .limit(6);
     console.log("products", products);
 
     res.status(201).json({
@@ -556,6 +597,71 @@ const productsbycategoryid = async (req, res) => {
     });
   } catch (err) {
     console.log("err", err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const searchProductlogs = async (req, res) => {
+  const { searchString } = req.body;
+  console.log("req.body", searchString, typeof searchString);
+  try {
+    const abc = await Order.aggregate([
+      {
+        $match: { "orderItems.name": { $regex: searchString, $options: "i" } }
+      },
+      {
+        $group: {
+          _id: "$shippingAddress.shippingstate",
+
+          // orders: { $first: "$$CURRENT" },
+          // total: { $multiply: [ "$price", "$quantity" ] },
+          count: { $sum: "$totalPrice" },
+          groupedata: {
+            $push: {
+              order: "$orderItems",
+              _id: "$_id",
+              taxperproduct: "$taxperproduct",
+              totalPrice: "$totalPrice",
+              shippingAddress: "$shippingAddress",
+              taxPrice: "$taxPrice"
+            }
+          }
+        }
+      }
+    ]);
+    console.log("abc", abc);
+    let productbystate = [];
+    abc.length > 0 &&
+      abc.map((abcc) => {
+        let productbystatee = [];
+        abcc.groupedata.map((gr) =>
+          gr.order.map((ord) => {
+            console.log("productbystateeproductbystatee", productbystatee);
+            const found = productbystatee.find((e) => e.ord.name === ord.name);
+            console.log("found", found);
+            if (found) {
+              console.log("insideblock");
+              productbystatee = productbystatee.map((prodddd) => {
+                if (prodddd.ord.name == ord.name)
+                  prodddd.ord.qty = prodddd.ord.qty + ord.qty;
+                return prodddd;
+              });
+            } else {
+              console.log("elseblock");
+              productbystatee.push({ ord, state: abcc._id });
+            }
+          })
+        );
+        productbystate.push([...productbystatee]);
+      });
+    console.log("productbystate", productbystate);
+    await res.status(200).json({
+      abc,
+      productbystate
+    });
+  } catch (err) {
+    console.log(err);
     res.status(500).json({
       message: err.toString()
     });
@@ -570,10 +676,13 @@ export {
   productbycategorylogs,
   deleteProduct,
   getlimitedProducts,
+  searchProductlogs,
   productlogsofAdmin,
   toggleActiveStatus,
   editProduct,
   getproductsbycategoryid,
   geoGeneticslogs,
-  productsbycategoryid
+  productsbycategoryid,
+  getProductDetailsByName,
+  geoGeneticsProducts
 };

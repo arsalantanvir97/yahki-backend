@@ -9,6 +9,10 @@ const DocumentSchema = mongoose.Schema(
     pdfname: {
       type: String,
     },
+    
+    pdfimage: {
+      type: String,
+    },
   },
   {
     timestamps: true,

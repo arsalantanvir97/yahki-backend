@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler";
+import Mongoose from "mongoose";
 
 import Admin from "../models/AdminModel.js";
 import Reset from "../models/ResetModel.js";
@@ -230,7 +231,7 @@ const editProfile = asyncHandler(async (req, res) => {
     req.files.user_image[0] &&
     req.files.user_image[0].path;
 
-  const admin = await Admin.findOne();
+  const admin = await Admin.findOne({ email });
   admin.firstName = firstName;
   admin.lastName = lastName;
   admin.email = email;
@@ -302,6 +303,30 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
+    res.json({
+      _id: user._id,
+      firstName: user.firstName,
+
+      email: user.email,
+      userImage: user.userImage,
+
+      token: generateToken(user._id)
+    });
+  } else {
+    console.log("error");
+    return res.status(201).json({
+      message: "Invalid Email or Password"
+    });
+  }
+});
+
+const emailLogin = asyncHandler(async (req, res) => {
+  console.log("authAdmin");
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (user) {
     res.json({
       _id: user._id,
       firstName: user.firstName,
@@ -394,8 +419,130 @@ const registerUserbyAdmin = asyncHandler(async (req, res) => {
   }
 });
 
+const registerAdminbyAdmin = asyncHandler(async (req, res) => {
+  const { firstName, lastName, email } = req.body;
+
+  const AdminExists = await Admin.findOne({ email });
+
+  if (AdminExists) {
+    res.status(400);
+    throw new Error("Admin already exists");
+  }
+
+  const admin = await Admin.create({
+    firstName,
+    lastName,
+    email
+  });
+
+  if (admin) {
+    res.status(201).json({
+      admin
+    });
+  } else {
+    res.status(400);
+    throw new Error("Invalid user data");
+  }
+});
+
+const adminlogs = async (req, res) => {
+  try {
+    console.log("req.query.searchString", req.query.searchString);
+    const searchParam = req.query.searchString
+      ? // { $text: { $search: req.query.searchString } }
+        {
+          $or: [
+            {
+              firstName: {
+                $regex: `${req.query.searchString}`,
+                $options: "i"
+              }
+            },
+            {
+              lastName: {
+                $regex: `${req.query.searchString}`,
+                $options: "i"
+              }
+            },
+            {
+              email: {
+                $regex: `${req.query.searchString}`,
+                $options: "i"
+              }
+            }
+          ]
+        }
+      : {};
+    let sort =
+      req.query.sort == "asc"
+        ? { createdAt: -1 }
+        : req.query.sort == "des"
+        ? { createdAt: 1 }
+        : { createdAt: 1 };
+
+    const from = req.query.from;
+    const to = req.query.to;
+    let dateFilter = {};
+    if (from && to)
+      dateFilter = {
+        createdAt: {
+          $gte: moment.utc(new Date(from)).startOf("day"),
+          $lte: moment.utc(new Date(to)).endOf("day")
+        }
+      };
+    const adminfilter = { _id: { $ne: req.id } };
+    const admin = await Admin.paginate(
+      {
+        ...adminfilter,
+        ...searchParam,
+        ...dateFilter
+      },
+      {
+        page: req.query.page,
+        limit: req.query.perPage,
+        lean: true,
+        sort: sort
+      }
+    );
+    await res.status(200).json({
+      admin
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const adminDetails = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.params.id)
+      .lean()
+      .select("-password");
+    await res.status(201).json({
+      admin
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const deleteAdmin = async (req, res) => {
+  try {
+    console.log("deleteFeedback", req.params.id);
+    const admin = await Admin.findByIdAndRemove(req.params.id);
+    return res.status(200).json({ message: "Admin deleted" });
+  } catch (err) {
+    console.log('err',err)
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 export {
   registerAdmin,
+  deleteAdmin,
   authAdmin,
   recoverPassword,
   verifyRecoverCode,
@@ -407,5 +554,9 @@ export {
   verifyAndREsetPassword,
   adminverifyRecoverCode,
   adminresetPassword,
-  registerUserbyAdmin
+  registerUserbyAdmin,
+  emailLogin,
+  registerAdminbyAdmin,
+  adminlogs,
+  adminDetails
 };
