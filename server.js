@@ -22,6 +22,7 @@ import taxRoutes from "./routes/taxRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
 import consultationRoutes from "./routes/consultationRoutes";
 import shipmentRoutes from "./routes/shipmentRoutes";
+import instructionRoutes from "./routes/instructionRoutes";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -140,6 +141,7 @@ app.use("/api/tax", taxRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/consultationRoutes", consultationRoutes);
 app.use("/api/shipment", shipmentRoutes);
+app.use("/api/instruction", instructionRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));

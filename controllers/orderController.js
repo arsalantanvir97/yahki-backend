@@ -22,7 +22,7 @@ const addOrderItems = async (req, res) => {
   } else {
     const order = new Order({
       orderItems,
-      user: userid,
+      user: req.id,
       shippingAddress,
       paymentMethod,
       taxperproduct,
@@ -35,10 +35,10 @@ const addOrderItems = async (req, res) => {
       notifiableId: null,
       notificationType: "Admin",
       title: `Order Created`,
-      body: `An order of id ${order._id} has been created by a user having id ${userid} `,
+      body: `An order of id ${order._id} has been created by a user having id ${req.id} `,
       payload: {
         type: "USER",
-        id: userid
+        id: req.id
       }
     };
     CreateNotification(notification);
@@ -71,7 +71,7 @@ const addGeoGeneticsOrderItems = async (req, res) => {
     } else {
       const order = new Order({
         orderItems: JSON.parse(orderItems),
-        user: userid,
+        user: req.id,
         shippingAddress: JSON.parse(shippingAddress),
         paymentMethod: JSON.parse(paymentMethod),
         taxperproduct: Number(taxperproduct),
@@ -86,10 +86,10 @@ const addGeoGeneticsOrderItems = async (req, res) => {
         notifiableId: null,
         notificationType: "Admin",
         title: `Order Created`,
-        body: `An order of id ${order._id} has been created by a user having id ${userid} `,
+        body: `An order of id ${order._id} has been created by a user having id ${req.id} `,
         payload: {
           type: "USER",
-          id: userid
+          id: req.id
         }
       };
       CreateNotification(notification);
@@ -286,6 +286,17 @@ const updateOrderToDelivered = async (req, res) => {
     order.isDelivered = req.body.status;
 
     const updatedOrder = await order.save();
+    const notification = {
+      notifiableId: null,
+      notificationType: "User",
+      title: `Order Delivered`,
+      body: `An order of id ${order._id} status has been changed to delivered by admin`,
+      payload: {
+        type: "USER",
+        id: req.id
+      }
+    };
+    CreateNotification(notification);
 
     res.status(200).json(updatedOrder);
   } else {

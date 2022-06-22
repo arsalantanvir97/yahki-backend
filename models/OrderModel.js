@@ -6,7 +6,7 @@ const OrderSchema = mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User",
+      ref: "User"
     },
     orderItems: [
       {
@@ -17,9 +17,9 @@ const OrderSchema = mongoose.Schema(
         product: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
-          ref: "Product",
-        },
-      },
+          ref: "Product"
+        }
+      }
     ],
     shippingAddress: {
       billingaddress: { type: String },
@@ -35,67 +35,60 @@ const OrderSchema = mongoose.Schema(
       shippingcountry: { type: String },
       shippingname: { type: String },
       shippingstate: { type: String },
-      shippingzipcode: { type: String },
+      shippingzipcode: { type: String }
     },
     paymentMethod: {
       cardholdername: { type: String },
       cardnumber: { type: String },
       cvvnumber: { type: String },
       expirydate: { type: String },
-      paymentmethod: { type: String },
+      paymentmethod: { type: String }
     },
     status: {
       type: String,
+      default: "Pending"
+    },
 
-      default: "Pending",
-    },
-    paymentResult: {
-      id: { type: String },
-      status: { type: String },
-      update_time: { type: String },
-      email_address: { type: String },
-    },
     taxPrice: {
       type: Number,
       required: true,
-      default: 0.0,
+      default: 0.0
     },
     taxperproduct: {
       type: Number,
       required: true,
-      default: 0.0,
+      default: 0.0
     },
     shippingPrice: {
       type: Number,
       required: true,
-      default: 0.0,
+      default: 0.0
     },
     totalPrice: {
       type: Number,
       required: true,
-      default: 0.0,
+      default: 0.0
     },
     isPaid: {
       type: Boolean,
       required: true,
-      default: false,
+      default: false
     },
     paidAt: {
-      type: Date,
+      type: Date
     },
     isDelivered: {
-      type: Boolean,
-      required: true,
-      default: false,
+      type: String,
+      default: "Pending"
     },
     deliveredAt: {
-      type: Date,
+      type: Date
     },
-    isGeoGenetics:{type:Boolean,default:false},
-    governmentid: { type: String },
+    isGeoGenetics: { type: Boolean, default: false },
+    governmentid: { type: String }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 OrderSchema.plugin(mongoosePaginate);
