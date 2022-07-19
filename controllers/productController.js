@@ -1,5 +1,6 @@
 import Mongoose from "mongoose";
 import Category from "../models/CategoryModel";
+import GeoGeneticsText from "../models/GeoGeneticsTextModel";
 import Order from "../models/OrderModel";
 import Product from "../models/ProductModel";
 
@@ -114,9 +115,10 @@ const geoGeneticsProducts = async (req, res) => {
     const geoGeneticsproduct = await Product.find({
       category: geoGeneticscategory._id
     });
+    const geogeneticstext=await GeoGeneticsText.findOne().lean()
     console.log("geoGeneticsproduct", geoGeneticsproduct);
     await res.status(201).json({
-      geoGeneticsproduct
+      geoGeneticsproduct,geogeneticstext
     });
   } catch (err) {
     res.status(500).json({

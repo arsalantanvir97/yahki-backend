@@ -3,6 +3,7 @@ import Mongoose from "mongoose";
 import moment from "moment";
 import User from "../models/UserModel.js";
 import CreateNotification from "../utills/notification.js";
+import GeoGeneticsText from "../models/GeoGeneticsTextModel.js";
 
 const addOrderItems = async (req, res) => {
   const {
@@ -16,7 +17,6 @@ const addOrderItems = async (req, res) => {
     shippingPrice,
     totalPrice
   } = req.body;
-
   if (orderItems && orderItems.length === 0) {
     return res.status(400).json({ message: "No Order Items" });
   } else {
@@ -48,10 +48,9 @@ const addOrderItems = async (req, res) => {
   }
 };
 const addGeoGeneticsOrderItems = async (req, res) => {
-  console.log("req.body", req.body);
+  console.log("req.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.id", req.id);
   try {
     const {
-      userid,
       orderItems,
       shippingAddress,
       paymentMethod,
@@ -267,8 +266,10 @@ const geoGeneticslogs = async (req, res) => {
         populate: "user"
       }
     );
+    const geogenetictext=await GeoGeneticsText.findOne().lean()
     await res.status(200).json({
-      order
+      order,
+      geogenetictext
     });
   } catch (err) {
     console.log(err);
@@ -407,6 +408,29 @@ const getLatestOrders = async (req, res) => {
   }
 };
 
+const editgeogeneticstext = async function (req, res) {
+  const { text } = req.body;
+  let editgeogenetics;
+  try {
+    editgeogenetics = await GeoGeneticsText.findOne();
+    if (editgeogenetics) {
+      editgeogenetics.text = text;
+    } else {
+      geogeneticsn = await GeoGeneticsText.create({
+        text
+      });
+    }
+    await editgeogenetics.save();
+    res.status(201).json({
+      editgeogenetics
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
 export {
   addOrderItems,
   getOrderById,
@@ -417,5 +441,6 @@ export {
   getCountofallCollection,
   getLatestOrders,
   addGeoGeneticsOrderItems,
-  geoGeneticslogs
+  geoGeneticslogs,
+  editgeogeneticstext
 };

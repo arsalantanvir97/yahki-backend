@@ -1,4 +1,5 @@
 import Instruction from "../models/InstructionModel";
+import InstructionText from "../models/InstructionTextModel";
 
 const createinstruction = async (req, res) => {
   const { videotitle, description } = req.body;
@@ -23,10 +24,13 @@ const createinstruction = async (req, res) => {
 const getallinstructions = async (req, res) => {
   try {
     const getallinstructions = await Instruction.find().lean();
+    const instructiontext = await InstructionText.findOne().lean();
+
     console.log("getallinstructions", getallinstructions);
     if (getallinstructions) {
       res.status(201).json({
-        getallinstructions
+        getallinstructions,
+        instructiontext
       });
     }
   } catch (err) {
@@ -114,8 +118,10 @@ const instructionlogs = async (req, res) => {
         sort: sort
       }
     );
+    const editinstruction=await InstructionText.findOne().lean()
     await res.status(200).json({
-      instruction
+      instruction,
+      editinstruction
     });
   } catch (err) {
     console.log(err);
@@ -124,10 +130,32 @@ const instructionlogs = async (req, res) => {
     });
   }
 };
-
+const editinstructiontext = async function (req, res) {
+  const { text } = req.body;
+  let editinstruction;
+  try {
+    editinstruction = await InstructionText.findOne();
+    if (editinstruction) {
+      editinstruction.text = text;
+    } else {
+      instructionn = await InstructionText.create({
+        text
+      });
+    }
+    await editinstruction.save();
+    res.status(201).json({
+      editinstruction
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 export {
   createinstruction,
   getallinstructions,
   editinstruction,
-  instructionlogs
+  instructionlogs,
+  editinstructiontext
 };

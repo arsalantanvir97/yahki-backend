@@ -10,13 +10,13 @@ import {
   updateOrderToDelivered,
   getCountofallCollection,
   getLatestOrders,
-  addGeoGeneticsOrderItems,
+  addGeoGeneticsOrderItems,editgeogeneticstext,
   geoGeneticslogs
 } from "../controllers/orderController";
 import { protect } from "../middlewares/authMiddleware";
 
-router.post("/addOrderItems", addOrderItems);
-router.post("/addGeoGeneticsOrderItems", addGeoGeneticsOrderItems);
+router.post("/addOrderItems",protect, addOrderItems);
+router.post("/addGeoGeneticsOrderItems",protect, addGeoGeneticsOrderItems);
 
 router.get("/getOrderById/:id", getOrderById);
 router.put("/:id/pay", updateOrderToPaid);
@@ -26,6 +26,8 @@ router.get("/logs", logs);
 router.get("/geoGeneticslogs", geoGeneticslogs);
 
 router.get("/getLatestOrders", protect, getLatestOrders);
+router.post("/editgeogeneticstext", protect, editgeogeneticstext);
+
 
 router.get("/getCountofallCollection", protect, getCountofallCollection);
 

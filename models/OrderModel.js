@@ -29,8 +29,13 @@ const OrderSchema = mongoose.Schema(
       billingstate: { type: String },
       billingzipcode: { type: String },
       email: { type: String },
+      signature: { type: String },
+
       phone: { type: String },
       shippingaddress: { type: String },
+      disclaimer: { type: Boolean },
+
+      
       shippingcity: { type: String },
       shippingcountry: { type: String },
       shippingname: { type: String },
