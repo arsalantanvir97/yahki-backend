@@ -18,7 +18,8 @@ import {
   productsbycategoryid,
   getProductDetailsByName,
   geoGeneticsProducts,
-  searchProductlogs
+  searchProductlogs,
+  bittersandElementProducts
 } from "../controllers/productController";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -39,5 +40,6 @@ router.get('/getproductsbycategoryid/:id', getproductsbycategoryid)
 router.get('/productsbycategoryid', productsbycategoryid)
 router.get("/productbycategorylogs/:id", productbycategorylogs);
 router.post('/searchProductlogs', searchProductlogs)
+router.get('/bittersandElementProducts', bittersandElementProducts)
 
 export default router;

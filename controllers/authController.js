@@ -15,6 +15,7 @@ import {
   generateHash
 } from "../queries";
 import CreateNotification from "../utills/notification.js";
+import WishList from "../models/WishListModel.js";
 
 const registerAdmin = asyncHandler(async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -39,7 +40,6 @@ const registerAdmin = asyncHandler(async (req, res) => {
       firstName: admin.firstName,
       lastName: admin.lastName,
       email: admin.email,
-
       token: generateToken(admin._id)
     });
   } else {
@@ -301,11 +301,13 @@ const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
+  const wishlist = await WishList.find({ user:user._id }).select('product');
 
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
       firstName: user.firstName,
+      wishlist,
 
       email: user.email,
       userImage: user.userImage,
@@ -325,11 +327,13 @@ const emailLogin = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
   const user = await User.findOne({ email });
+  const wishlist = await WishList.find({ user:user._id }).select('product');
 
   if (user) {
     res.json({
       _id: user._id,
       firstName: user.firstName,
+      wishlist,
 
       email: user.email,
       userImage: user.userImage,
@@ -531,7 +535,7 @@ const adminDetails = async (req, res) => {
 const deleteAdmin = async (req, res) => {
   try {
     console.log("deleteFeedback", req.params.id);
-    const admin = await Admin.findByIdAndRemove(req.params.id);
+  await Admin.findByIdAndRemove(req.params.id);
     return res.status(200).json({ message: "Admin deleted" });
   } catch (err) {
     console.log('err',err)

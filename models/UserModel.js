@@ -5,27 +5,27 @@ import mongoosePaginate from "mongoose-paginate-v2";
 const UserSchema = mongoose.Schema(
   {
     firstName: {
-      type: String,
+      type: String
     },
     lastName: {
-      type: String,
+      type: String
     },
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: true
     },
     password: {
       type: String,
-      required: true,
+      required: true
     },
-    userImage:{type:String} ,
-    type:{type:String} ,
+    userImage: { type: String },
+    type: { type: String },
 
-    status: { type: Boolean, default: true },
+    status: { type: Boolean, default: true }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 

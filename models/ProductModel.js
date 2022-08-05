@@ -27,6 +27,9 @@ const ProductSchema = mongoose.Schema(
     name: {
       type: String
     },
+    geotype: {
+      type: String
+    },
     visible: {
       type: Boolean
     },

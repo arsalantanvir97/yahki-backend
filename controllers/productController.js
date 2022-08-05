@@ -19,6 +19,7 @@ const createProduct = async (req, res) => {
       price: Number(price),
       category,
       visible,
+      geotype: req.body.type && req.body.type,
       description,
       countInStock: countInStock,
       productimage: reciepts
@@ -112,13 +113,19 @@ const geoGeneticsProducts = async (req, res) => {
       categorytitle: "Geo'Genetics"
     });
 
-    const geoGeneticsproduct = await Product.find({
-      category: geoGeneticscategory._id
+    const geoGeneticspackages = await Product.find({
+      category: geoGeneticscategory._id,
+      geotype: "PACKAGES"
     });
-    const geogeneticstext=await GeoGeneticsText.findOne().lean()
-    console.log("geoGeneticsproduct", geoGeneticsproduct);
+    const geoGeneticsprotocols = await Product.find({
+      category: geoGeneticscategory._id,
+      geotype: "PROTOCOLS"
+    });
+    const geogeneticstext = await GeoGeneticsText.findOne().lean();
     await res.status(201).json({
-      geoGeneticsproduct,geogeneticstext
+      geoGeneticspackages,
+      geoGeneticsprotocols,
+      geogeneticstext
     });
   } catch (err) {
     res.status(500).json({
@@ -669,6 +676,20 @@ const searchProductlogs = async (req, res) => {
     });
   }
 };
+const bittersandElementProducts = async (req, res) => {
+  try {
+    const product = await Product.find({
+      $or: [{ name: "IV Elements" }, { name: "3 BITTERS" }]
+    }).populate("category");
+    await res.status(201).json({
+      product
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 export {
   createProduct,
   getproducts,
@@ -686,5 +707,6 @@ export {
   geoGeneticslogs,
   productsbycategoryid,
   getProductDetailsByName,
-  geoGeneticsProducts
+  geoGeneticsProducts,
+  bittersandElementProducts
 };
