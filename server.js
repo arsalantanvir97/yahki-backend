@@ -24,6 +24,7 @@ import consultationRoutes from "./routes/consultationRoutes";
 import shipmentRoutes from "./routes/shipmentRoutes";
 import instructionRoutes from "./routes/instructionRoutes";
 import promoCodeRoutes from "./routes/promoCodeRoutes";
+import faqsRoutes from "./routes/faqsRoutes";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -144,6 +145,7 @@ app.use("/api/consultationRoutes", consultationRoutes);
 app.use("/api/shipment", shipmentRoutes);
 app.use("/api/instruction", instructionRoutes);
 app.use("/api/promo", promoCodeRoutes);
+app.use("/api/faq", faqsRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));

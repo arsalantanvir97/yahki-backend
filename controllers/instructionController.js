@@ -1,3 +1,4 @@
+import EattoliveText from "../models/EattoliveTextModel";
 import Instruction from "../models/InstructionModel";
 import InstructionText from "../models/InstructionTextModel";
 
@@ -152,9 +153,33 @@ const editinstructiontext = async function (req, res) {
     });
   }
 };
+const editeattolivetext = async function (req, res) {
+  const { text } = req.body;
+  let editeattolive;
+  try {
+    editeattolive = await EattoliveText.findOne();
+    if (editeattolive) {
+      editeattolive.text = text;
+    } else {
+      eattoliven = await EattoliveText.create({
+        text
+      });
+    }
+    await editeattolive.save();
+    res.status(201).json({
+      editeattolive
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
 export {
   createinstruction,
   getallinstructions,
+  editeattolivetext,
   editinstruction,
   instructionlogs,
   editinstructiontext

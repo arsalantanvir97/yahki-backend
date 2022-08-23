@@ -252,6 +252,33 @@ const editProfile = asyncHandler(async (req, res) => {
   });
 });
 
+const userEditProfile = asyncHandler(async (req, res) => {
+  const { firstName,  email } = req.body;
+  let user_image =
+    req.files &&
+    req.files.user_image &&
+    req.files.user_image[0] &&
+    req.files.user_image[0].path;
+
+  const user = await User.findOne({ email });
+  user.firstName = firstName;
+  user.email = email;
+
+  user.userImage = user_image ? user_image : user.userImage;
+  await user.save();
+  // await res.status(201).json({
+  //   message: "Admin Update",
+  //   admin,
+  // });
+  await res.status(201).json({
+    _id: user._id,
+    firstName: user.firstName,
+    email: user.email,
+    userImage: user.userImage,
+    token: generateToken(user._id)
+  });
+});
+
 const registerUser = asyncHandler(async (req, res) => {
   const { firstName, email, password, confirmpassword } = req.body;
   if (!comparePassword(password, confirmpassword))
@@ -321,6 +348,8 @@ const authUser = asyncHandler(async (req, res) => {
     });
   }
 });
+
+
 
 const emailLogin = asyncHandler(async (req, res) => {
   console.log("authAdmin");
@@ -562,5 +591,6 @@ export {
   emailLogin,
   registerAdminbyAdmin,
   adminlogs,
-  adminDetails
+  adminDetails,
+  userEditProfile
 };

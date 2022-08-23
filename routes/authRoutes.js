@@ -13,7 +13,7 @@ import {
   adminRecoverPassword,
   adminverifyRecoverCode,
   adminresetPassword,
-  registerUserbyAdmin,emailLogin,registerAdminbyAdmin,adminlogs,adminDetails,deleteAdmin
+  registerUserbyAdmin,emailLogin,registerAdminbyAdmin,adminlogs,adminDetails,deleteAdmin, userEditProfile
 } from "../controllers/authController.js";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -37,6 +37,9 @@ router.post("/adminresetPassword", adminresetPassword);
 router.get("/admin-details/:id",adminDetails);
 
 router.post("/editProfile", editProfile);
+router.post("/userEditProfile",protect, userEditProfile);
+
+
 router.post("/registerUser", registerUser);
 router.post("/registerUserbyAdmin",protect, registerUserbyAdmin);
 
