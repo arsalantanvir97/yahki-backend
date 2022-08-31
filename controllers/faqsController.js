@@ -1,5 +1,6 @@
 import FAQS from "../models/FAQSModel";
 import moment from "moment";
+import FAQVideo from "../models/FAQVIdeoModel";
 
 const createfaqs = async (req, res) => {
   console.log("req.body", req.body);
@@ -54,8 +55,11 @@ const faqslogs = async (req, res) => {
         sort: "_id"
       }
     );
+    const faqss = await FAQVideo.findOne().lean();
+
     await res.status(200).json({
-      faqs
+      faqs,
+      faqss
     });
   } catch (err) {
     console.log(err);
@@ -80,35 +84,60 @@ const getfaqsdetails = async (req, res) => {
   }
 };
 const editfaqs = async (req, res) => {
-    const { question,answer } = req.body
-    console.log('req.body', req.body)
-    try {
-      const tax = await Tax.findOne({_id:taxid})
-      console.log('tax', tax)
-      tax.state = state
-      tax.percent = percent
-      await tax.save()
-      console.log('tax', tax)
-  
-      res.status(201).json({
-        message: 'Tax Updated Successfully',
-      })
-    } catch (err) {
-      res.status(500).json({
-        message: err.toString(),
-      })
-    }
-  }
-  const getallfaqs=async(req,res)=>{
-try {
-    const faqs=await FAQS.find().lean()
+  const { question, answer } = req.body;
+  console.log("req.body", req.body);
+  try {
+    const tax = await Tax.findOne({ _id: taxid });
+    console.log("tax", tax);
+    tax.state = state;
+    tax.percent = percent;
+    await tax.save();
+    console.log("tax", tax);
+
     res.status(201).json({
-        faqs
-    })
-} catch (error) {
+      message: "Tax Updated Successfully"
+    });
+  } catch (err) {
     res.status(500).json({
-        message: error.toString(),
-      })
-}
+      message: err.toString()
+    });
   }
-export { createfaqs, faqslogs, getfaqsdetails,editfaqs,getallfaqs };
+};
+const getallfaqs = async (req, res) => {
+  try {
+    const faqs = await FAQS.find().lean();
+    const faqqs = await FAQVideo.findOne().lean();
+
+    res.status(201).json({
+      faqs,
+      faqqs
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.toString()
+    });
+  }
+};
+const faqvideo = async (req, res) => {
+  let ad_video =
+    req.files &&
+    req.files.ad_video &&
+    req.files.ad_video[0] &&
+    req.files.ad_video[0].path;
+  try {
+    await FAQVideo.findOneAndUpdate(
+      {},
+      { videouri: ad_video },
+      { new: true, upsert: true, returnNewDocument: true }
+    );
+    res.status(201).json({
+      message: "Video Uploaded Successfully"
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.toString()
+    });
+  }
+};
+
+export { createfaqs, faqslogs, getfaqsdetails, editfaqs, getallfaqs, faqvideo };

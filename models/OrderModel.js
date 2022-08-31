@@ -89,6 +89,12 @@ const OrderSchema = mongoose.Schema(
     deliveredAt: {
       type: Date
     },
+    paymentResultData: {
+      type: Object
+    },
+    paymentResultDetails: {
+      type: Object
+    },
     isGeoGenetics: { type: Boolean, default: false },
     governmentid: { type: String }
   },

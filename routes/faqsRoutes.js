@@ -6,7 +6,8 @@ import {
   getfaqsdetails,
   faqslogs,
   editfaqs,
-  getallfaqs
+  getallfaqs,
+  faqvideo
 } from "../controllers/faqsController";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -15,6 +16,7 @@ router.get("/getfaqsdetails/:id", protect, getfaqsdetails);
 router.get("/faqslogs", protect,faqslogs);
 router.post('/editfaqs', protect, editfaqs)
 router.get("/getallfaqs",getallfaqs);
+router.post('/faqvideo', faqvideo)
 
 
 export default router;

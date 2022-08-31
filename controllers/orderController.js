@@ -48,7 +48,10 @@ const addOrderItems = async (req, res) => {
   }
 };
 const addGeoGeneticsOrderItems = async (req, res) => {
-  console.log("req.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.id", req.id);
+  console.log(
+    "req.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.idreq.id",
+    req.id
+  );
   try {
     const {
       orderItems,
@@ -119,12 +122,8 @@ const updateOrderToPaid = async (req, res) => {
     order.status = "Paid";
 
     order.paidAt = Date.now();
-    order.paymentResult = {
-      id: req.body.id,
-      status: req.body.status,
-      update_time: req.body.update_time,
-      email_address: req.body.email_address
-    };
+    order.paymentResultData = req.body.paymentResultData;
+    order.paymentResultDetails = req.body.paymentResultDetails;
 
     const updatedOrder = await order.save();
 
@@ -266,7 +265,7 @@ const geoGeneticslogs = async (req, res) => {
         populate: "user"
       }
     );
-    const geogenetictext=await GeoGeneticsText.findOne().lean()
+    const geogenetictext = await GeoGeneticsText.findOne().lean();
     await res.status(200).json({
       order,
       geogenetictext
