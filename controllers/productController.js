@@ -690,6 +690,23 @@ const bittersandElementProducts = async (req, res) => {
     });
   }
 };
+const featuredProducts = async (req, res) => {
+  try {
+    const product = await Product.find({name:'3 BITTERS'  }).populate("category");
+    const category=await Category.find({
+      $or: [{ categorytitle: "Kits & Bundles" }, { categorytitle: "Teas" }]
+    }).populate("category");
+    await res.status(201).json({
+      product,
+      category
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
 export {
   createProduct,
   getproducts,
@@ -708,5 +725,6 @@ export {
   productsbycategoryid,
   getProductDetailsByName,
   geoGeneticsProducts,
-  bittersandElementProducts
+  bittersandElementProducts,
+  featuredProducts
 };
