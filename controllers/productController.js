@@ -698,7 +698,7 @@ const featuredProducts = async (req, res) => {
     }).populate("category");
     await res.status(201).json({
       products:[
-        ...product,category
+        ...product,...category
       ],
       
     });
