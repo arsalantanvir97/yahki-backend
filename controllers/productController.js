@@ -697,8 +697,10 @@ const featuredProducts = async (req, res) => {
       $or: [{ categorytitle: "Kits & Bundles" }, { categorytitle: "Teas" }]
     }).populate("category");
     await res.status(201).json({
-      product,
-      category
+      products:[
+        ...product,category
+      ],
+      
     });
   } catch (err) {
     res.status(500).json({
