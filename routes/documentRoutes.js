@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 import {
-    createDocument,getallDocuments,editDocument,
+    createDocument,getallDocuments,editDocument,deleteDocument,
     documentlogs} from "../controllers/documentController";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -13,5 +13,6 @@ router.post('/editDocument', protect, editDocument)
 
 router.get('/documentlogs',protect, documentlogs)
 
+router.get('/deleteDocument/:id', protect, deleteDocument)
 
 export default router;
