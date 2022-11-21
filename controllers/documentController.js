@@ -134,5 +134,16 @@ const documentlogs = async (req, res) => {
     });
   }
 };
-
-export { createDocument, getallDocuments, editDocument, documentlogs };
+const deleteDocument = async (req, res) => {
+  try {
+    console.log("deleteDocument", req.params.id);
+  await Document.findByIdAndRemove(req.params.id);
+    return res.status(200).json({ message: "Document deleted" });
+  } catch (err) {
+    console.log('err',err)
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+export { createDocument, deleteDocument,getallDocuments, editDocument, documentlogs };

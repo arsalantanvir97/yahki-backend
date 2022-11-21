@@ -114,6 +114,27 @@ const getLatestUsers = async (req, res) => {
     });
   }
 };
+const becomemeber = asyncHandler(async (req, res) => {
+  let user_image =
+    req.files &&
+    req.files.user_image &&
+    req.files.user_image[0] &&
+    req.files.user_image[0].path;
+
+  const user = await User.findById(req.id);
+  user.signature = user_image;
+    user.ismember = true;
+
+
+  await user.save();
+  // await res.status(201).json({
+  //   message: "Admin Update",
+  //   admin,
+  // });
+  await res.status(201).json({
+    user
+  });
+});
 
 const editProfile = asyncHandler(async (req, res) => {
   const { firstName, lastName, email } = req.body;
@@ -144,5 +165,7 @@ export {
   toggleActiveStatus,
   getUserDetails,
   getLatestUsers,
-  editProfile
+  becomemeber,
+
+	editProfile
 };

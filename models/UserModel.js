@@ -7,6 +7,12 @@ const UserSchema = mongoose.Schema(
     firstName: {
       type: String
     },
+	  ismember: {
+      type: Boolean
+    },
+    signature: {
+      type: String
+    },
     lastName: {
       type: String
     },
