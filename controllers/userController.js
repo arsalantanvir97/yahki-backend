@@ -1,5 +1,7 @@
 import moment from "moment";
 import asyncHandler from "express-async-handler";
+import WishList from "../models/WishListModel.js";
+import generateToken from "../utills/generateJWTtoken.js";
 
 import User from "../models/UserModel.js";
 
@@ -120,9 +122,14 @@ const becomemeber = asyncHandler(async (req, res) => {
     req.files.user_image &&
     req.files.user_image[0] &&
     req.files.user_image[0].path;
+  console.log('req.files.user_image',req.files.user_image)
+
+console.log('user_image',user_image)
 
   const user = await User.findById(req.id);
-  user.signature = user_image;
+   const wishlist = await WishList.find({ user:user._id }).select('product');
+
+	user.signature = user_image;
     user.ismember = true;
 
 
@@ -131,9 +138,16 @@ const becomemeber = asyncHandler(async (req, res) => {
   //   message: "Admin Update",
   //   admin,
   // });
-  await res.status(201).json({
-    user
-  });
+   res.json({
+      _id: user._id,
+      firstName: user.firstName,
+      wishlist,
+signature:user.signature,ismember:user.ismember,
+      email: user.email,
+      userImage: user.userImage,
+
+      token: generateToken(user._id)
+    });
 });
 
 const editProfile = asyncHandler(async (req, res) => {
