@@ -25,7 +25,9 @@ const OrderSchema = mongoose.Schema(
       billingaddress: { type: String },
       billingcity: { type: String },
       billingcountry: { type: String },
-      billingname: { type: String },
+      billingfirstname: { type: String },
+      billinglastname: { type: String },
+
       billingstate: { type: String },
       billingzipcode: { type: String },
       email: { type: String },
@@ -38,7 +40,9 @@ const OrderSchema = mongoose.Schema(
       
       shippingcity: { type: String },
       shippingcountry: { type: String },
-      shippingname: { type: String },
+      shippingfirstname: { type: String },
+      shippinglastname: { type: String },
+
       shippingstate: { type: String },
       shippingzipcode: { type: String }
     },
