@@ -5,7 +5,8 @@ import {
     logs,
     toggleActiveStatus,
     getUserDetails,getLatestUsers,
-    editProfile,becomemeber
+    editProfile,becomemeber,
+    getuserordersandwihslist
 } from "../controllers/userController.js";
 import { protect } from '../middlewares/authMiddleware'
 
@@ -16,6 +17,7 @@ router.get("/user-details/:id",getUserDetails);
 router.get("/getlatestusers", getLatestUsers);
 router.post("/editProfile", editProfile);
 router.post("/becomemeber",protect, becomemeber);
+router.get("/getuserordersandwihslist",protect, getuserordersandwihslist);
 
 
 export default router;

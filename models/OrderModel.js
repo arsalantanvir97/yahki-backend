@@ -27,24 +27,32 @@ const OrderSchema = mongoose.Schema(
       billingcountry: { type: String },
       billingfirstname: { type: String },
       billinglastname: { type: String },
-
       billingstate: { type: String },
       billingzipcode: { type: String },
       email: { type: String },
       signature: { type: String },
-
       phone: { type: String },
       shippingaddress: { type: String },
       disclaimer: { type: Boolean },
-
-      
       shippingcity: { type: String },
       shippingcountry: { type: String },
       shippingfirstname: { type: String },
       shippinglastname: { type: String },
-
       shippingstate: { type: String },
-      shippingzipcode: { type: String }
+      shippingzipcode: { type: String },
+      yourinfofirstName: { type: String },
+      yourinfolastName: { type: String },
+      yourinfoemail: { type: String },
+      yourinfophone: { type: String },
+      yourinfoage: { type: String },
+      yourinfoheight: { type: String },
+      yourinfoweight: { type: String },
+      yourinfoethnicity: { type: String },
+      yourinfoconsultaionfor: { type: String },
+      yourinfosetcurrentmedication: { type: String },
+      yourinforeason: { type: String },
+      yourinfodiagnosis: { type: String },
+      yourinfodoc_schedule: { type: String },
     },
     paymentMethod: {
       cardholdername: { type: String },

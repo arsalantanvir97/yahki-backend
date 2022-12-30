@@ -207,7 +207,11 @@ const resetPassword = async (req, res) => {
       res.status(201).json({
         _id: updateduser._id,
         firstName: updateduser.firstName,
-
+        lastName: updateduser.lastName,
+        memberfirstname: updateduser.memberfirstname,
+        memberlastname: updateduser.memberlastname,
+        signature: updateduser.signature,
+        ismember: updateduser.ismember,
         email: updateduser.email,
         token: generateToken(updateduser._id)
       });
@@ -246,6 +250,7 @@ const editProfile = asyncHandler(async (req, res) => {
     _id: admin._id,
     firstName: admin.firstName,
     lastName: admin.lastName,
+    
     email: admin.email,
     userImage: admin.userImage,
     token: generateToken(admin._id)
@@ -253,7 +258,7 @@ const editProfile = asyncHandler(async (req, res) => {
 });
 
 const userEditProfile = asyncHandler(async (req, res) => {
-  const { firstName,  email } = req.body;
+  const { firstName, lastName, email } = req.body;
   let user_image =
     req.files &&
     req.files.user_image &&
@@ -263,7 +268,9 @@ const userEditProfile = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
   user.firstName = firstName;
   user.email = email;
+  user.lastName = lastName;
 
+  
   user.userImage = user_image ? user_image : user.userImage;
   await user.save();
   // await res.status(201).json({
@@ -273,6 +280,11 @@ const userEditProfile = asyncHandler(async (req, res) => {
   await res.status(201).json({
     _id: user._id,
     firstName: user.firstName,
+    memberfirstname: user.memberfirstname,
+    memberlastname: user.memberlastname,
+    signature: user.signature,
+    ismember: user.ismember,
+    lastName: user.lastName,
     email: user.email,
     userImage: user.userImage,
     token: generateToken(user._id)
@@ -280,7 +292,7 @@ const userEditProfile = asyncHandler(async (req, res) => {
 });
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { firstName, email, password, confirmpassword } = req.body;
+  const { firstName,lastName, email, password, confirmpassword } = req.body;
   if (!comparePassword(password, confirmpassword))
     return res.status(400).json({ message: "Password does not match" });
 
@@ -293,6 +305,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const user = await User.create({
     firstName,
+    lastName,
     email,
     password,
     type: "User"
@@ -314,6 +327,9 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(201).json({
       _id: user._id,
       firstName: user.firstName,
+      lastName: user.lastName,
+
+      
       email: user.email,
       token: generateToken(user._id)
     });
@@ -335,10 +351,13 @@ const authUser = asyncHandler(async (req, res) => {
       _id: user._id,
       firstName: user.firstName,
       wishlist,
-
+      lastName: user.lastName,
       email: user.email,
       userImage: user.userImage,
-
+      memberfirstname: user.memberfirstname,
+      memberlastname: user.memberlastname,
+      signature: user.signature,
+      ismember: user.ismember,
       token: generateToken(user._id)
     });
   } else {
@@ -363,7 +382,11 @@ const emailLogin = asyncHandler(async (req, res) => {
       _id: user._id,
       firstName: user.firstName,
       wishlist,
-
+      lastName: user.lastName,
+      memberfirstname: user.memberfirstname,
+      memberlastname: user.memberlastname,
+      signature: user.signature,
+      ismember: user.ismember,
       email: user.email,
       userImage: user.userImage,
 

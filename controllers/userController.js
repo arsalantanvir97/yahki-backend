@@ -4,41 +4,42 @@ import WishList from "../models/WishListModel.js";
 import generateToken from "../utills/generateJWTtoken.js";
 
 import User from "../models/UserModel.js";
+import Order from "../models/OrderModel.js";
 
 const logs = async (req, res) => {
   try {
     console.log("req.query.searchString", req.query.searchString);
     const searchParam = req.query.searchString
       ? // { $text: { $search: req.query.searchString } }
-        {
-          $or: [
-            {
-              firstName: {
-                $regex: `${req.query.searchString}`,
-                $options: "i"
-              }
-            },
-            {
-              lastName: {
-                $regex: `${req.query.searchString}`,
-                $options: "i"
-              }
-            },
-            {
-              email: {
-                $regex: `${req.query.searchString}`,
-                $options: "i"
-              }
+      {
+        $or: [
+          {
+            firstName: {
+              $regex: `${req.query.searchString}`,
+              $options: "i"
             }
-          ]
-        }
+          },
+          {
+            lastName: {
+              $regex: `${req.query.searchString}`,
+              $options: "i"
+            }
+          },
+          {
+            email: {
+              $regex: `${req.query.searchString}`,
+              $options: "i"
+            }
+          }
+        ]
+      }
       : {};
     let sort =
       req.query.sort == "asc"
         ? { createdAt: -1 }
         : req.query.sort == "des"
-        ? { createdAt: 1 }
-        : { createdAt: 1 };
+          ? { createdAt: 1 }
+          : { createdAt: 1 };
 
     const from = req.query.from;
     const to = req.query.to;
@@ -117,37 +118,45 @@ const getLatestUsers = async (req, res) => {
   }
 };
 const becomemeber = asyncHandler(async (req, res) => {
+  const { memberfirstname, memberlastname } = req.body
   let user_image =
     req.files &&
     req.files.user_image &&
     req.files.user_image[0] &&
     req.files.user_image[0].path;
-  console.log('req.files.user_image',req.files.user_image)
+  console.log('req.files.user_image', req.files.user_image)
 
-console.log('user_image',user_image)
+  console.log('user_image', user_image)
 
   const user = await User.findById(req.id);
-   const wishlist = await WishList.find({ user:user._id }).select('product');
+  const wishlist = await WishList.find({ user: user._id }).select('product');
 
-	user.signature = user_image;
-    user.ismember = true;
-
+  user.signature = user_image;
+  user.ismember = true;
+  user.memberfirstname = memberfirstname
+  user.memberlastname = memberlastname
 
   await user.save();
   // await res.status(201).json({
   //   message: "Admin Update",
   //   admin,
   // });
-   res.json({
-      _id: user._id,
-      firstName: user.firstName,
-      wishlist,
-signature:user.signature,ismember:user.ismember,
-      email: user.email,
-      userImage: user.userImage,
+  res.json({
+    _id: user._id,
+    firstName: user.firstName,
+    memberfirstname: user.memberfirstname,
+    memberlastname: user.memberlastname,
+    signature: user.signature,
+    ismember: user.ismember,
 
-      token: generateToken(user._id)
-    });
+    lastName: user.lastName,
+
+    wishlist,
+    email: user.email,
+    userImage: user.userImage,
+
+    token: generateToken(user._id)
+  });
 });
 
 const editProfile = asyncHandler(async (req, res) => {
@@ -158,7 +167,7 @@ const editProfile = asyncHandler(async (req, res) => {
     req.files.user_image[0] &&
     req.files.user_image[0].path;
 
-  const user = await User.findOne({email});
+  const user = await User.findOne({ email });
   user.firstName = firstName;
   user.lastName = lastName;
   user.email = email;
@@ -173,13 +182,33 @@ const editProfile = asyncHandler(async (req, res) => {
     user
   });
 });
+const getuserordersandwihslist = async (req, res) => {
+  try {
+    const user = await User.findById(req.id).lean().select("-password");
+    const wishListofUser = await WishList.find({ user: req.id }).populate(
+      "user product"
+    ).lean()
+    const orderofUser = await Order.find({ user: req.id }).populate(
+      "user"
+    ).lean()
 
+    await res.status(201).json({
+      user,
+      wishListofUser,
+      orderofUser
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString(),
+    });
+  }
+};
 export {
   logs,
   toggleActiveStatus,
   getUserDetails,
   getLatestUsers,
   becomemeber,
-
-	editProfile
+  getuserordersandwihslist,
+  editProfile
 };
