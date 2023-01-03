@@ -195,13 +195,20 @@ const becomemeber = async (req, res) => {
       hearaboutus,
       termsservices,
       privacypolicy,
-      membershipstatus ,
+      membershipstatus,
       user:req.id
     })
-
+const user=await User.findById(req.id)
+user.ismember=true
+await user.save()
     console.log('membership', membership)
     res.status(201).json({
-      membership,
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      userImage: user.userImage,
+      token: generateToken(user._id)
     })
 
   } catch (err) {

@@ -209,7 +209,9 @@ const resetPassword = async (req, res) => {
         firstName: updateduser.firstName,
         lastName: updateduser.lastName,
         email: updateduser.email,
-        token: generateToken(updateduser._id)
+        token: generateToken(updateduser._id),
+        ismember:updateduser.ismember
+
       });
     }
   } catch (error) {
@@ -250,6 +252,7 @@ const editProfile = asyncHandler(async (req, res) => {
     email: admin.email,
     userImage: admin.userImage,
     token: generateToken(admin._id)
+
   });
 });
 
@@ -279,7 +282,9 @@ const userEditProfile = asyncHandler(async (req, res) => {
     lastName: user.lastName,
     email: user.email,
     userImage: user.userImage,
-    token: generateToken(user._id)
+    token: generateToken(user._id),
+    ismember:user.ismember
+
   });
 });
 
@@ -320,6 +325,7 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: user._id,
       firstName: user.firstName,
       lastName: user.lastName,
+      ismember:user.ismember,
 
       
       email: user.email,
@@ -346,7 +352,9 @@ const authUser = asyncHandler(async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       userImage: user.userImage,
-      token: generateToken(user._id)
+      token: generateToken(user._id),
+      ismember:user.ismember
+
     });
   } else {
     console.log("error");
@@ -373,6 +381,7 @@ const emailLogin = asyncHandler(async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       userImage: user.userImage,
+      ismember:user.ismember,
 
       token: generateToken(user._id)
     });

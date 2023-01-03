@@ -25,6 +25,7 @@ const UserSchema = mongoose.Schema(
     },
     userImage: { type: String },
     type: { type: String },
+    ismember: { type: Boolean },
 
     status: { type: Boolean, default: true }
   },
