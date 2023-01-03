@@ -208,7 +208,8 @@ await user.save()
       lastName: user.lastName,
       email: user.email,
       userImage: user.userImage,
-      token: generateToken(user._id)
+      token: generateToken(user._id),
+      ismember:user.ismember
     })
 
   } catch (err) {
