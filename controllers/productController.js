@@ -63,6 +63,22 @@ const getproducts = async (req, res) => {
     });
   }
 };
+const geoGeneticsText = async (req, res) => {
+  try {
+    const geogeneticstext = await GeoGeneticsText.findOne().lean();;
+
+    res.status(201).json({
+      geogeneticstext
+    });
+
+  } catch (err) {
+    console.log("err", err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
 
 const getProductDetails = async (req, res) => {
   try {
@@ -138,11 +154,11 @@ const productlogs = async (req, res) => {
     console.log("req.query.searchString", req.query.searchString);
     const searchParam = req.query.searchString
       ? // { $text: { $search: req.query.searchString } }
-        {
-          $or: [
-            { name: { $regex: `${req.query.searchString}`, $options: "i" } }
-          ]
-        }
+      {
+        $or: [
+          { name: { $regex: `${req.query.searchString}`, $options: "i" } }
+        ]
+      }
       : {};
 
     const status_filter = req.query.status ? { status: req.query.status } : {};
@@ -164,14 +180,14 @@ const productlogs = async (req, res) => {
       req.query.sort == "asc"
         ? { price: 1 }
         : req.query.sort == "des"
-        ? { price: -1 }
-        : req.query.sort == "latest"
-        ? "createdAt"
-        : req.query.sort == "nameasc"
-        ? { name: 1 }
-        : req.query.sort == "namedes"
-        ? { name: -1 }
-        : "createdAt";
+          ? { price: -1 }
+          : req.query.sort == "latest"
+            ? "createdAt"
+            : req.query.sort == "nameasc"
+              ? { name: 1 }
+              : req.query.sort == "namedes"
+                ? { name: -1 }
+                : "createdAt";
 
     // console.log('lowprice',lowprice)
     console.log("sort", sort);
@@ -226,11 +242,11 @@ const productlogsofAdmin = async (req, res) => {
     console.log("req.query.searchString", req.query.searchString);
     const searchParam = req.query.searchString
       ? // { $text: { $search: req.query.searchString } }
-        {
-          $or: [
-            { name: { $regex: `${req.query.searchString}`, $options: "i" } }
-          ]
-        }
+      {
+        $or: [
+          { name: { $regex: `${req.query.searchString}`, $options: "i" } }
+        ]
+      }
       : {};
     console.log("req.query.geogeneticscategory", req.query.geogeneticscategory);
 
@@ -256,8 +272,8 @@ const productlogsofAdmin = async (req, res) => {
       req.query.sort == "asc"
         ? { createdAt: -1 }
         : req.query.sort == "des"
-        ? { createdAt: 1 }
-        : { createdAt: 1 };
+          ? { createdAt: 1 }
+          : { createdAt: 1 };
 
     // console.log('lowprice',lowprice)
     console.log("sort", sort);
@@ -307,11 +323,11 @@ const geoGeneticslogs = async (req, res) => {
     console.log("req.query.searchString", req.query.searchString);
     const searchParam = req.query.searchString
       ? // { $text: { $search: req.query.searchString } }
-        {
-          $or: [
-            { name: { $regex: `${req.query.searchString}`, $options: "i" } }
-          ]
-        }
+      {
+        $or: [
+          { name: { $regex: `${req.query.searchString}`, $options: "i" } }
+        ]
+      }
       : {};
 
     const status_filter = req.query.status ? { status: req.query.status } : {};
@@ -333,8 +349,8 @@ const geoGeneticslogs = async (req, res) => {
       req.query.sort == "asc"
         ? { createdAt: -1 }
         : req.query.sort == "des"
-        ? { createdAt: 1 }
-        : { createdAt: 1 };
+          ? { createdAt: 1 }
+          : { createdAt: 1 };
 
     // console.log('lowprice',lowprice)
     console.log("sort", sort);
@@ -383,11 +399,11 @@ const productbycategorylogs = async (req, res) => {
     console.log("req.query.searchString", req.query.searchString);
     const searchParam = req.query.searchString
       ? // { $text: { $search: req.query.searchString } }
-        {
-          $or: [
-            { name: { $regex: `${req.query.searchString}`, $options: "i" } }
-          ]
-        }
+      {
+        $or: [
+          { name: { $regex: `${req.query.searchString}`, $options: "i" } }
+        ]
+      }
       : {};
 
     const status_filter = req.query.status ? { status: req.query.status } : {};
@@ -409,14 +425,14 @@ const productbycategorylogs = async (req, res) => {
       req.query.sort == "asc"
         ? { price: 1 }
         : req.query.sort == "des"
-        ? { price: -1 }
-        : req.query.sort == "latest"
-        ? "createdAt"
-        : req.query.sort == "nameasc"
-        ? { name: 1 }
-        : req.query.sort == "namedes"
-        ? { name: -1 }
-        : "createdAt";
+          ? { price: -1 }
+          : req.query.sort == "latest"
+            ? "createdAt"
+            : req.query.sort == "nameasc"
+              ? { name: 1 }
+              : req.query.sort == "namedes"
+                ? { name: -1 }
+                : "createdAt";
 
     // console.log('lowprice',lowprice)
     console.log("sort", sort);
@@ -692,15 +708,15 @@ const bittersandElementProducts = async (req, res) => {
 };
 const featuredProducts = async (req, res) => {
   try {
-    const product = await Product.find({name:'3 BITTERS'  }).populate("category");
-    const category=await Category.find({
+    const product = await Product.find({ name: '3 BITTERS' }).populate("category");
+    const category = await Category.find({
       $or: [{ categorytitle: "Kits & Bundles" }, { categorytitle: "Teas" }]
     }).populate("category");
     await res.status(201).json({
-      products:[
-        ...product,...category
+      products: [
+        ...product, ...category
       ],
-      
+
     });
   } catch (err) {
     res.status(500).json({
@@ -724,6 +740,7 @@ export {
   editProduct,
   getproductsbycategoryid,
   geoGeneticslogs,
+  geoGeneticsText,
   productsbycategoryid,
   getProductDetailsByName,
   geoGeneticsProducts,

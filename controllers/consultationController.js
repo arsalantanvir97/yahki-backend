@@ -5,10 +5,12 @@ import Mongoose from "mongoose";
 const createConsultation = async (req, res) => {
   try {
     const {
+      paymentResultData,
+      paymentResultDetails,
       consultationaddress,
       appointmenttime,
       appointmentdate,
-      paymentinfo,
+      // paymentinfo,
       confirmationinfo,
       user
     } = req.body;
@@ -32,7 +34,10 @@ const createConsultation = async (req, res) => {
       consultationaddress: JSON.parse(consultationaddress),
       appointmenttime,
       appointmentdate: datee,
-      paymentinfo: JSON.parse(paymentinfo),
+
+      paymentResultDetails: JSON.parse(paymentResultDetails),
+
+      paymentResultData: JSON.parse(paymentResultData),
       confirmationinfo: JSON.parse(confirmationinfo),
       user,
       governmentid: doc_schedule
@@ -86,8 +91,8 @@ const logs = async (req, res) => {
       req.query.sort == "asc"
         ? { createdAt: -1 }
         : req.query.sort == "des"
-        ? { createdAt: 1 }
-        : { createdAt: 1 };
+          ? { createdAt: 1 }
+          : { createdAt: 1 };
 
     const from = req.query.from;
     const to = req.query.to;
@@ -133,8 +138,8 @@ const userlogs = async (req, res) => {
       req.query.sort == "asc"
         ? { createdAt: -1 }
         : req.query.sort == "des"
-        ? { createdAt: 1 }
-        : { createdAt: 1 };
+          ? { createdAt: 1 }
+          : { createdAt: 1 };
 
     const from = req.query.from;
     const to = req.query.to;
@@ -148,7 +153,8 @@ const userlogs = async (req, res) => {
       };
 
     const consultation = await Consultation.paginate(
-      { user: Mongoose.mongo.ObjectId(req.query.id),
+      {
+        user: Mongoose.mongo.ObjectId(req.query.id),
         ...searchParam,
         ...dateFilter
       },

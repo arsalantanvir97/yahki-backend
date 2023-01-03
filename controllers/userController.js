@@ -5,6 +5,7 @@ import generateToken from "../utills/generateJWTtoken.js";
 
 import User from "../models/UserModel.js";
 import Order from "../models/OrderModel.js";
+import Membership from "../models/MembershipModel.js";
 
 const logs = async (req, res) => {
   try {
@@ -117,47 +118,6 @@ const getLatestUsers = async (req, res) => {
     });
   }
 };
-const becomemeber = asyncHandler(async (req, res) => {
-  const { memberfirstname, memberlastname } = req.body
-  let user_image =
-    req.files &&
-    req.files.user_image &&
-    req.files.user_image[0] &&
-    req.files.user_image[0].path;
-  console.log('req.files.user_image', req.files.user_image)
-
-  console.log('user_image', user_image)
-
-  const user = await User.findById(req.id);
-  const wishlist = await WishList.find({ user: user._id }).select('product');
-
-  user.signature = user_image;
-  user.ismember = true;
-  user.memberfirstname = memberfirstname
-  user.memberlastname = memberlastname
-
-  await user.save();
-  // await res.status(201).json({
-  //   message: "Admin Update",
-  //   admin,
-  // });
-  res.json({
-    _id: user._id,
-    firstName: user.firstName,
-    memberfirstname: user.memberfirstname,
-    memberlastname: user.memberlastname,
-    signature: user.signature,
-    ismember: user.ismember,
-
-    lastName: user.lastName,
-
-    wishlist,
-    email: user.email,
-    userImage: user.userImage,
-
-    token: generateToken(user._id)
-  });
-});
 
 const editProfile = asyncHandler(async (req, res) => {
   const { firstName, lastName, email } = req.body;
@@ -203,12 +163,61 @@ const getuserordersandwihslist = async (req, res) => {
     });
   }
 };
+
+const becomemeber = async (req, res) => {
+  try {
+    const { firstname,
+      lastname,
+      email,
+      phone,
+      address,
+      zipcode,
+      country,
+      city,
+      state,
+      dob,
+      hearaboutus,
+      termsservices,
+      privacypolicy,
+      membershipstatus } = req.body
+
+    const membership = await Membership.create({
+      firstname,
+      lastname,
+      email,
+      phone,
+      address,
+      zipcode,
+      country,
+      city,
+      state,
+      dob,
+      hearaboutus,
+      termsservices,
+      privacypolicy,
+      membershipstatus ,
+      user:req.id
+    })
+
+    console.log('membership', membership)
+    res.status(201).json({
+      membership,
+    })
+
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString(),
+    });
+  }
+
+}
+
 export {
   logs,
+  becomemeber,
   toggleActiveStatus,
   getUserDetails,
   getLatestUsers,
-  becomemeber,
   getuserordersandwihslist,
   editProfile
 };

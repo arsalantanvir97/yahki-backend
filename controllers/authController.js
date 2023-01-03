@@ -208,10 +208,6 @@ const resetPassword = async (req, res) => {
         _id: updateduser._id,
         firstName: updateduser.firstName,
         lastName: updateduser.lastName,
-        memberfirstname: updateduser.memberfirstname,
-        memberlastname: updateduser.memberlastname,
-        signature: updateduser.signature,
-        ismember: updateduser.ismember,
         email: updateduser.email,
         token: generateToken(updateduser._id)
       });
@@ -280,10 +276,6 @@ const userEditProfile = asyncHandler(async (req, res) => {
   await res.status(201).json({
     _id: user._id,
     firstName: user.firstName,
-    memberfirstname: user.memberfirstname,
-    memberlastname: user.memberlastname,
-    signature: user.signature,
-    ismember: user.ismember,
     lastName: user.lastName,
     email: user.email,
     userImage: user.userImage,
@@ -354,10 +346,6 @@ const authUser = asyncHandler(async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       userImage: user.userImage,
-      memberfirstname: user.memberfirstname,
-      memberlastname: user.memberlastname,
-      signature: user.signature,
-      ismember: user.ismember,
       token: generateToken(user._id)
     });
   } else {
@@ -383,10 +371,6 @@ const emailLogin = asyncHandler(async (req, res) => {
       firstName: user.firstName,
       wishlist,
       lastName: user.lastName,
-      memberfirstname: user.memberfirstname,
-      memberlastname: user.memberlastname,
-      signature: user.signature,
-      ismember: user.ismember,
       email: user.email,
       userImage: user.userImage,
 

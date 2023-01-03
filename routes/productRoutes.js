@@ -20,7 +20,8 @@ import {
   geoGeneticsProducts,
   searchProductlogs,
   bittersandElementProducts,
-  featuredProducts
+  featuredProducts,
+  geoGeneticsText
 } from "../controllers/productController";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -43,5 +44,6 @@ router.get("/productbycategorylogs/:id", productbycategorylogs);
 router.post('/searchProductlogs', searchProductlogs)
 router.get('/bittersandElementProducts', bittersandElementProducts)
 router.get("/featuredProducts", featuredProducts);
+router.get("/geoGeneticsText", geoGeneticsText);
 
 export default router;
