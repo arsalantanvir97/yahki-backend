@@ -283,7 +283,8 @@ const userEditProfile = asyncHandler(async (req, res) => {
     email: user.email,
     userImage: user.userImage,
     token: generateToken(user._id),
-    ismember:user.ismember
+    ismember:user.ismember,
+    createdAt:user.createdAt
 
   });
 });
@@ -329,7 +330,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
       
       email: user.email,
-      token: generateToken(user._id)
+      token: generateToken(user._id),
+      createdAt:user.createdAt
+
     });
   } else {
     res.status(400);
@@ -353,7 +356,8 @@ const authUser = asyncHandler(async (req, res) => {
       email: user.email,
       userImage: user.userImage,
       token: generateToken(user._id),
-      ismember:user.ismember
+      ismember:user.ismember,
+      createdAt:user.createdAt
 
     });
   } else {
@@ -382,6 +386,7 @@ const emailLogin = asyncHandler(async (req, res) => {
       email: user.email,
       userImage: user.userImage,
       ismember:user.ismember,
+      createdAt:user.createdAt,
 
       token: generateToken(user._id)
     });

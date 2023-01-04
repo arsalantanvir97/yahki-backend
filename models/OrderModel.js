@@ -50,7 +50,6 @@ const OrderSchema = mongoose.Schema(
       yourinfoethnicity: { type: String },
       yourinfoconsultaionfor: { type: String },
       yourinfosetcurrentmedication: { type: String },
-      yourinforeason: { type: String },
       yourinfodiagnosis: { type: String },
       yourinfodoc_schedule: { type: String },
     },

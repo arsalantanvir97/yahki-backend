@@ -15,6 +15,7 @@ import {
   adminresetPassword,
   registerUserbyAdmin,emailLogin,registerAdminbyAdmin,adminlogs,adminDetails,deleteAdmin, userEditProfile
 } from "../controllers/authController.js";
+import { getVideo, uploadVideo } from "../controllers/videoController.js";
 import { protect } from "../middlewares/authMiddleware";
 
 router.post("/adminRegister", registerAdmin);
@@ -47,5 +48,7 @@ router.post("/authUser", authUser);
 router.post("/emailLogin", emailLogin);
 
 router.post("/verifyAndREsetPassword", protect, verifyAndREsetPassword);
+router.post("/uploadVideo", uploadVideo);
+router.get("/getVideo", getVideo);
 
 export default router;

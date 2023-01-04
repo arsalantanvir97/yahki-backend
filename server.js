@@ -80,7 +80,15 @@ app.use(
     {
       name: "reciepts",
       maxCount: 12
-    }
+    },
+    {
+      name: "video_file",
+      maxCount: 1,
+    },
+    {
+      name: "thumbnail",
+      maxCount: 1,
+    },
   ])
 );
 
