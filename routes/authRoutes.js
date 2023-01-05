@@ -17,6 +17,7 @@ import {
 } from "../controllers/authController.js";
 import { getVideo, uploadVideo } from "../controllers/videoController.js";
 import { protect } from "../middlewares/authMiddleware";
+import { extendTimeout } from "../middlewares/extendTimeout.js";
 
 router.post("/adminRegister", registerAdmin);
 router.post("/registerAdminbyAdmin", protect,registerAdminbyAdmin);
@@ -48,7 +49,7 @@ router.post("/authUser", authUser);
 router.post("/emailLogin", emailLogin);
 
 router.post("/verifyAndREsetPassword", protect, verifyAndREsetPassword);
-router.post("/uploadVideo", uploadVideo);
+router.post("/uploadVideo",extendTimeout, uploadVideo);
 router.get("/getVideo", getVideo);
 
 export default router;
