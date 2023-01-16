@@ -276,9 +276,9 @@ const userEditProfile = asyncHandler(async (req, res) => {
     req.files.user_image[0].path;
 
   const user = await User.findOne({ email });
-  user.firstName = firstName;
+  user.firstname = firstName;
   user.email = email;
-  user.lastName = lastName;
+  user.lastname = lastName;
 
   
   user.userImage = user_image ? user_image : user.userImage;
