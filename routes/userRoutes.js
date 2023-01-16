@@ -16,7 +16,7 @@ router.get("/toggle-active/:id",toggleActiveStatus);
 router.get("/user-details/:id",getUserDetails);
 router.get("/getlatestusers", getLatestUsers);
 router.post("/editProfile", editProfile);
-router.post("/becomemeber",protect, becomemeber);
+router.post("/becomemeber", becomemeber);
 router.get("/getuserordersandwihslist",protect, getuserordersandwihslist);
 
 

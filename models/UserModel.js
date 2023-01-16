@@ -4,28 +4,25 @@ import mongoosePaginate from "mongoose-paginate-v2";
 
 const UserSchema = mongoose.Schema(
   {
-    firstName: {
-      type: String
-    },
-    lastName: {
-      type: String
-    },
-	  
-    lastName: {
-      type: String
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true
-    },
+    firstname: { type: String },
+    lastname: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    address: { type: String },
+    zipcode: { type: String },
+    country: { type: String },
     password: {
       type: String,
       required: true
     },
     userImage: { type: String },
-    type: { type: String },
-    ismember: { type: Boolean },
+    city: { type: String },
+    state: { type: String },
+    dob: { type: String },
+    hearaboutus: { type: String },
+    termsservices: { type: String },
+    privacypolicy: { type: String },
+    membershipstatus: { type: String },
 
     status: { type: Boolean, default: true }
   },

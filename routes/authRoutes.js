@@ -7,7 +7,7 @@ import {
   verifyRecoverCode,
   resetPassword,
   editProfile,
-  registerUser,
+  // registerUser,
   authUser,
   verifyAndREsetPassword,
   adminRecoverPassword,
@@ -42,7 +42,7 @@ router.post("/editProfile", editProfile);
 router.post("/userEditProfile",protect, userEditProfile);
 
 
-router.post("/registerUser", registerUser);
+// router.post("/registerUser", registerUser);
 router.post("/registerUserbyAdmin",protect, registerUserbyAdmin);
 
 router.post("/authUser", authUser);

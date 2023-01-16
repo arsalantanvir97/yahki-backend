@@ -175,17 +175,25 @@ const becomemeber = async (req, res) => {
       country,
       city,
       state,
+      password,
       dob,
       hearaboutus,
       termsservices,
       privacypolicy,
       membershipstatus } = req.body
+    const UserExists = await User.findOne({ email });
+    if (UserExists) {
+      res.status(400).json({
+        message: err.toString(),
+      });
+    }
 
-    const membership = await Membership.create({
+    const user = await User.create({
       firstname,
       lastname,
       email,
       phone,
+      password,
       address,
       zipcode,
       country,
@@ -196,20 +204,27 @@ const becomemeber = async (req, res) => {
       termsservices,
       privacypolicy,
       membershipstatus,
-      user:req.id
     })
-const user=await User.findById(req.id)
-user.ismember=true
-await user.save()
-    console.log('membership', membership)
+    await user.save()
     res.status(201).json({
       _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstname: user.firstname,
+      lastname: user.lastname,
       email: user.email,
+      phone: user.phone,
+      address: user.address,
+      zipcode: user.zipcode,
+      country: user.country,
+      city: user.city,
+      state: user.state,
+      dob: user.dob,
+      hearaboutus: user.hearaboutus,
+      termsservices: user.termsservices,
+      privacypolicy: user.privacypolicy,
+      membershipstatus: user.membershipstatus,
       userImage: user.userImage,
       token: generateToken(user._id),
-      ismember:user.ismember
+      createdAt: user.createdAt
     })
 
   } catch (err) {

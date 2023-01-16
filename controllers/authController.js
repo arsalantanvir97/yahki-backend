@@ -200,18 +200,29 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Invalid Recovery status" });
     else {
       console.log("resetexist");
-      const updateduser = await User.findOne({ email });
-      updateduser.password = password;
-      await updateduser.save();
-      console.log("updatedadmin", updateduser);
+      const user = await User.findOne({ email });
+      user.password = password;
+      await user.save();
+      console.log("updatedadmin", user);
       res.status(201).json({
-        _id: updateduser._id,
-        firstName: updateduser.firstName,
-        lastName: updateduser.lastName,
-        email: updateduser.email,
-        token: generateToken(updateduser._id),
-        ismember:updateduser.ismember
-
+        _id: user._id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        zipcode: user.zipcode,
+        country: user.country,
+        city: user.city,
+        state: user.state,
+        dob: user.dob,
+        hearaboutus: user.hearaboutus,
+        termsservices: user.termsservices,
+        privacypolicy: user.privacypolicy,
+        membershipstatus: user.membershipstatus,
+        userImage: user.userImage,
+        token: generateToken(user._id),
+        createdAt: user.createdAt
       });
     }
   } catch (error) {
@@ -278,13 +289,23 @@ const userEditProfile = asyncHandler(async (req, res) => {
   // });
   await res.status(201).json({
     _id: user._id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    userImage: user.userImage,
-    token: generateToken(user._id),
-    ismember:user.ismember,
-    createdAt:user.createdAt
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        zipcode: user.zipcode,
+        country: user.country,
+        city: user.city,
+        state: user.state,
+        dob: user.dob,
+        hearaboutus: user.hearaboutus,
+        termsservices: user.termsservices,
+        privacypolicy: user.privacypolicy,
+        membershipstatus: user.membershipstatus,
+        userImage: user.userImage,
+        token: generateToken(user._id),
+        createdAt: user.createdAt
 
   });
 });
@@ -350,14 +371,23 @@ const authUser = asyncHandler(async (req, res) => {
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
-      firstName: user.firstName,
-      wishlist,
-      lastName: user.lastName,
+      firstname: user.firstname,
+      lastname: user.lastname,
       email: user.email,
+      phone: user.phone,
+      address: user.address,
+      zipcode: user.zipcode,
+      country: user.country,
+      city: user.city,
+      state: user.state,
+      dob: user.dob,
+      hearaboutus: user.hearaboutus,
+      termsservices: user.termsservices,
+      privacypolicy: user.privacypolicy,
+      membershipstatus: user.membershipstatus,
       userImage: user.userImage,
       token: generateToken(user._id),
-      ismember:user.ismember,
-      createdAt:user.createdAt
+      createdAt: user.createdAt
 
     });
   } else {
@@ -380,15 +410,24 @@ const emailLogin = asyncHandler(async (req, res) => {
   if (user) {
     res.json({
       _id: user._id,
-      firstName: user.firstName,
-      wishlist,
-      lastName: user.lastName,
-      email: user.email,
-      userImage: user.userImage,
-      ismember:user.ismember,
-      createdAt:user.createdAt,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        zipcode: user.zipcode,
+        country: user.country,
+        city: user.city,
+        state: user.state,
+        dob: user.dob,
+        hearaboutus: user.hearaboutus,
+        termsservices: user.termsservices,
+        privacypolicy: user.privacypolicy,
+        membershipstatus: user.membershipstatus,
+        userImage: user.userImage,
+        token: generateToken(user._id),
+        createdAt: user.createdAt
 
-      token: generateToken(user._id)
     });
   } else {
     console.log("error");
@@ -602,7 +641,6 @@ export {
   verifyRecoverCode,
   resetPassword,
   editProfile,
-  registerUser,
   authUser,
   adminRecoverPassword,
   verifyAndREsetPassword,
