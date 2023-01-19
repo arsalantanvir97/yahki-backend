@@ -54,12 +54,11 @@ const OrderSchema = mongoose.Schema(
       yourinfodoc_schedule: { type: String },
     },
     paymentMethod: {
-      // cardholdername: { type: String },
-      // cardnumber: { type: String },
-      // cvvnumber: { type: String },
-      // expirydate: { type: String },
-      // paymentmethod: { type: String }
-      type: String
+      cardholdername: { type: String },
+      cardnumber: { type: String },
+      cvvnumber: { type: String },
+      expirydate: { type: String },
+      paymentmethod: { type: String }
     },
     
     status: {

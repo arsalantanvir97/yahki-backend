@@ -18,7 +18,7 @@ const addOrderItems = async (req, res) => {
     shippingPrice,
     totalPrice
   } = req.body;
-  console.log('req.body',req.body)
+  console.log('req.body',req.body,'req.body.totalPrice',req.body.totalPrice)
   if (orderItems && orderItems.length === 0) {
     return res.status(400).json({ message: "No Order Items" });
   } else {
