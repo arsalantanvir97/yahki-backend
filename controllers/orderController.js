@@ -4,6 +4,7 @@ import moment from "moment";
 import User from "../models/UserModel.js";
 import CreateNotification from "../utills/notification.js";
 import GeoGeneticsText from "../models/GeoGeneticsTextModel.js";
+import PaymentInfo from "../models/PaymentInfoModel.js";
 
 const addOrderItems = async (req, res) => {
   const {
@@ -430,7 +431,49 @@ const editgeogeneticstext = async function (req, res) {
     });
   }
 };
+const savepaymentinfo = async (req, res) => {
+  const { cardholdername,
+    cardnumber,
+    cvvnumber,
+    expirydate,
+    paymentmethod } = req.body
+  console.log('req.body', req.body)
+  try {
+    const PaymentInfoExists = await PaymentInfo.findOne({ user:req.id })
 
+    if (PaymentInfoExists) {
+      PaymentInfoExists.cardholdername = cardholdername
+      PaymentInfoExists.cardnumber = cardnumber
+      PaymentInfoExists.cvvnumber = cvvnumber
+      PaymentInfoExists.expirydate = expirydate
+      PaymentInfoExists.paymentmethod = paymentmethod
+
+      await PaymentInfoExists.save()
+    }
+  else{
+    const payment = new PaymentInfo({
+      cardholdername,
+      cardnumber,
+      cvvnumber,
+      expirydate,
+      paymentmethod,
+      user:req.id
+    })
+    console.log('payment', payment)
+    const paymentcreated = await payment.save()
+   await User.findByIdAndUpdate({_id:req.id}, { paymentinfo: payment._id}, { new: true });
+
+    
+    console.log('paymentcreated', paymentcreated)}
+      res.status(201).json({
+        message:'Successful',
+      })
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString(),
+    })
+  }
+}
 export {
   addOrderItems,
   getOrderById,
@@ -442,5 +485,6 @@ export {
   getLatestOrders,
   addGeoGeneticsOrderItems,
   geoGeneticslogs,
-  editgeogeneticstext
+  editgeogeneticstext,
+  savepaymentinfo
 };

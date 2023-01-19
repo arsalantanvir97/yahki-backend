@@ -11,7 +11,8 @@ import {
   getCountofallCollection,
   getLatestOrders,
   addGeoGeneticsOrderItems,editgeogeneticstext,
-  geoGeneticslogs
+  geoGeneticslogs,
+  savepaymentinfo
 } from "../controllers/orderController";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -30,5 +31,6 @@ router.post("/editgeogeneticstext", protect, editgeogeneticstext);
 
 
 router.get("/getCountofallCollection", protect, getCountofallCollection);
+router.post("/savepaymentinfo", protect, savepaymentinfo);
 
 export default router;

@@ -23,7 +23,11 @@ const UserSchema = mongoose.Schema(
     termsservices: { type: String },
     privacypolicy: { type: String },
     membershipstatus: { type: String },
-
+    paymentinfo: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "PaymentInfo"
+  },
     status: { type: Boolean, default: true }
   },
   {

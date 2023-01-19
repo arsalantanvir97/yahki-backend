@@ -200,7 +200,7 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Invalid Recovery status" });
     else {
       console.log("resetexist");
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).populate('paymentinfo');
       user.password = password;
       await user.save();
       console.log("updatedadmin", user);
@@ -222,7 +222,8 @@ const resetPassword = async (req, res) => {
         membershipstatus: user.membershipstatus,
         userImage: user.userImage,
         token: generateToken(user._id),
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
+        paymentinfo:user.paymentinfo
       });
     }
   } catch (error) {
@@ -275,7 +276,7 @@ const userEditProfile = asyncHandler(async (req, res) => {
     req.files.user_image[0] &&
     req.files.user_image[0].path;
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).populate('paymentinfo');
   user.firstname = firstName;
   user.email = email;
   user.lastname = lastName;
@@ -305,7 +306,8 @@ const userEditProfile = asyncHandler(async (req, res) => {
         membershipstatus: user.membershipstatus,
         userImage: user.userImage,
         token: generateToken(user._id),
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
+        paymentinfo: user.paymentinfo
 
   });
 });
@@ -365,7 +367,7 @@ const authUser = asyncHandler(async (req, res) => {
   console.log("authAdmin");
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).populate('paymentinfo');
   const wishlist = await WishList.find({ user:user._id }).select('product');
 
   if (user && (await user.matchPassword(password))) {
@@ -387,7 +389,9 @@ const authUser = asyncHandler(async (req, res) => {
       membershipstatus: user.membershipstatus,
       userImage: user.userImage,
       token: generateToken(user._id),
-      createdAt: user.createdAt
+      createdAt: user.createdAt,
+      paymentinfo: user.paymentinfo
+
 
     });
   } else {
@@ -404,7 +408,7 @@ const emailLogin = asyncHandler(async (req, res) => {
   console.log("authAdmin");
   const { email } = req.body;
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).populate('paymentinfo');
   const wishlist = await WishList.find({ user:user._id }).select('product');
 
   if (user) {
@@ -426,7 +430,8 @@ const emailLogin = asyncHandler(async (req, res) => {
         membershipstatus: user.membershipstatus,
         userImage: user.userImage,
         token: generateToken(user._id),
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
+        paymentinfo: user.paymentinfo
 
     });
   } else {
