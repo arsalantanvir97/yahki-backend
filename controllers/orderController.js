@@ -5,6 +5,7 @@ import User from "../models/UserModel.js";
 import CreateNotification from "../utills/notification.js";
 import GeoGeneticsText from "../models/GeoGeneticsTextModel.js";
 import PaymentInfo from "../models/PaymentInfoModel.js";
+import generateJWTtoken from "../utills/generateJWTtoken.js";
 
 const addOrderItems = async (req, res) => {
   const {
@@ -465,9 +466,28 @@ const savepaymentinfo = async (req, res) => {
 
     
     console.log('paymentcreated', paymentcreated)}
-      res.status(201).json({
-        message:'Successful',
-      })
+    const user = await User.findOne({ _id:req.id }).populate('paymentinfo');
+    res.status(201).json({
+      _id: user._id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      zipcode: user.zipcode,
+      country: user.country,
+      city: user.city,
+      state: user.state,
+      dob: user.dob,
+      hearaboutus: user.hearaboutus,
+      termsservices: user.termsservices,
+      privacypolicy: user.privacypolicy,
+      membershipstatus: user.membershipstatus,
+      userImage: user.userImage,
+      token: generateJWTtoken(user._id),
+      createdAt: user.createdAt,
+      paymentinfo: user.paymentinfo
+    })
   } catch (err) {
     res.status(500).json({
       message: err.toString(),
