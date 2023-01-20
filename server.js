@@ -95,10 +95,10 @@ app.get('/api/config/paypal', (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
 )
 app.get('/api/config/authorize', (req, res) =>
-  res.send(process.env.AUHTORIZE_APILOGIN_ID,process.env.AUHTORIZE_TRANSACTION_KEY)
+  res.send({loginid:process.env.AUHTORIZE_APILOGIN_ID,transactionkey:process.env.AUHTORIZE_TRANSACTION_KEY})
 )
 app.get('/api/config/sezzle', (req, res) =>
-  res.send(process.env.SEZZLE_KEY_ID,process.env.SEZZLE_PUBLIC_KEY,process.env.SEZZLE_PRIVATE_KEY)
+  res.send({keyid:process.env.SEZZLE_KEY_ID,publickey:process.env.SEZZLE_PUBLIC_KEY,privatekey:process.env.SEZZLE_PRIVATE_KEY})
 )
 app.post("/api/checkout", async (req, res) => {
   console.log("Request:", req.body);
