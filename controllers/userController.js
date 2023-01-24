@@ -228,6 +228,7 @@ const becomemeber = async (req, res) => {
     })
 
   } catch (err) {
+    console.log('err',err)
     res.status(500).json({
       message: err.toString(),
     });
