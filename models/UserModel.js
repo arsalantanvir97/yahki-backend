@@ -25,7 +25,7 @@ const UserSchema = mongoose.Schema(
     membershipstatus: { type: String },
     paymentinfo: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
+      
       ref: "PaymentInfo"
   },
     status: { type: Boolean, default: true }
