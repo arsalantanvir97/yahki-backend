@@ -134,20 +134,23 @@ const editevents = async (req, res) => {
         });
     }
 };
-// const getalluserEvents = async (req, res) => {
-//   try {
-//     const faqs = await FAQS.find().lean();
+const userevents = async (req, res) => {
+    var now = moment().toDate();
 
-//     res.status(201).json({
-//       faqs,
-//       faqqs
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       message: error.toString()
-//     });
-//   }
-// };
+  try {
+    const events = await Event.find({date:{
+        $gte: now
+    }}).lean();
+
+    res.status(201).json({
+        events
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.toString()
+    });
+  }
+};
 
 
 export {
@@ -155,5 +158,5 @@ export {
     geteventsdetails,
     eventslogs,
     editevents,
-    // getallevents
+    userevents
 };
