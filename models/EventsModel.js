@@ -19,13 +19,13 @@ const EventSchema = mongoose.Schema(
         desc: {
             type: String,
         },
-        users: [{
+        users: {
 
-            type: mongoose.Schema.Types.ObjectId,
+            type: Array,
       
-            ref: "User"
+           
       
-          }],
+          },
     },
     {
         timestamps: true,

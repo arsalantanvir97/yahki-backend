@@ -6,7 +6,9 @@ import {
   geteventsdetails,
   eventslogs,
   editevents,
-  userevents
+  userevents,
+  bookevent,
+  userBookings
 //   getallevents,
 } from "../controllers/eventsController";
 import { protect } from "../middlewares/authMiddleware";
@@ -16,6 +18,8 @@ router.get("/geteventsdetails/:id", protect, geteventsdetails);
 router.get("/eventslogs", protect,eventslogs);
 router.post('/editevents', protect, editevents)
 router.get('/userevents', protect, userevents)
+router.post('/bookevent', protect, bookevent)
+router.get('/userBookings', protect, userBookings)
 
 // router.get("/getallevents",getallevents);
 

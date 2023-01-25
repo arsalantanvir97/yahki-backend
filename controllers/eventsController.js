@@ -1,14 +1,15 @@
 import Event from "../models/EventsModel";
 import moment from "moment";
+import Booking from "../models/BookingModel";
 
 const createevents = async (req, res) => {
     const { title,
-        date,filetype,
+        date, filetype,
         desc } = req.body;
 
     console.log("req.body", req.body);
-  
-        let user_image =
+
+    let user_image =
         req.files &&
         req.files.user_image &&
         req.files.user_image[0] &&
@@ -56,13 +57,13 @@ const eventslogs = async (req, res) => {
                     $lte: moment.utc(new Date(to)).endOf("day")
                 }
             };
-            let sort =
+        let sort =
             req.query.sort == "asc"
-              ? { createdAt: -1 }
-              : req.query.sort == "des"
-              ? { createdAt: 1 }
-              : { createdAt: 1 };
-        
+                ? { createdAt: -1 }
+                : req.query.sort == "des"
+                    ? { createdAt: 1 }
+                    : { createdAt: 1 };
+
         const event = await Event.paginate(
             {
                 ...searchParam,
@@ -73,7 +74,7 @@ const eventslogs = async (req, res) => {
                 page: req.query.page,
                 limit: req.query.perPage,
                 lean: true,
-                sort:sort,
+                sort: sort,
             }
         );
 
@@ -137,19 +138,72 @@ const editevents = async (req, res) => {
 const userevents = async (req, res) => {
     var now = moment().toDate();
 
-  try {
-    const events = await Event.find({date:{
-        $gte: now
-    }}).lean();
+    try {
+        const events = await Event.find({
+            date: {
+                $gte: now
+            }
+        }).lean();
 
-    res.status(201).json({
-        events
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.toString()
-    });
-  }
+        res.status(201).json({
+            events
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error.toString()
+        });
+    }
+};
+const userBookings = async (req, res) => {
+
+    try {
+        const bookings = await Booking.find({
+           user:req.id
+        }).lean();
+
+        res.status(201).json({
+            bookings
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error.toString()
+        });
+    }
+};
+userevent
+const bookevent = async (req, res) => {
+    const { name,
+        email,
+        occupation, event } = req.body
+
+
+    try {
+        const events = await Event.findOne({ _id: event, users: req.id })
+        if (events) {
+           return res.status(203).json({
+                message: 'Event Already Booked'
+            });
+        }
+        else{
+          const booking=  new Booking({
+            name,
+            email,
+            occupation, event,user:req.id
+            });
+            await booking.save()
+            Event.update(
+                { _id: event }, 
+                { $addToSet: { users: req.id } }
+              );
+            }
+            res.status(201).json({
+                message: "Event Booked Successfully"
+            });
+    } catch (error) {
+        res.status(500).json({
+            message: error.toString()
+        });
+    }
 };
 
 
@@ -158,5 +212,7 @@ export {
     geteventsdetails,
     eventslogs,
     editevents,
-    userevents
+    userevents,
+    bookevent,
+    userBookings
 };
