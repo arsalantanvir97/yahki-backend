@@ -178,7 +178,7 @@ const bookevent = async (req, res) => {
 
 
     try {
-        const events = await Event.findOne({ _id: event, users: req.id })
+        const events = await Event.findOne({  $and: [{ _id: event, users: req.id }]})
         if (events) {
            return res.status(203).json({
                 message: 'Event Already Booked'
