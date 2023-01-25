@@ -170,7 +170,7 @@ const userBookings = async (req, res) => {
         });
     }
 };
-userevent
+
 const bookevent = async (req, res) => {
     const { name,
         email,
