@@ -49,7 +49,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
 });
 
 const authAdmin = asyncHandler(async (req, res) => {
-  console.log("authAdmin");
+try {
   const { email, password } = req.body;
 
   const admin = await Admin.findOne({ email });
@@ -64,13 +64,15 @@ const authAdmin = asyncHandler(async (req, res) => {
 
       token: generateToken(admin._id)
     });
-  } else {
-    console.log("error");
-    return res.status(201).json({
-      message: "Invalid Email or Password"
-    });
   }
+  
+} catch (error) {
+  return res.status(400).json({ message: error.toString() });
+
+}   
 });
+
+
 const adminRecoverPassword = asyncHandler(async (req, res) => {
   console.log("recoverPassword");
   const { email } = req.body;
@@ -238,34 +240,40 @@ const resetPassword = async (req, res) => {
 };
 
 const editProfile = asyncHandler(async (req, res) => {
-  const { firstName, lastName, email } = req.body;
-  let user_image =
-    req.files &&
-    req.files.user_image &&
-    req.files.user_image[0] &&
-    req.files.user_image[0].path;
+  try {
+    const { firstName, lastName, email } = req.body;
+    let user_image =
+      req.files &&
+      req.files.user_image &&
+      req.files.user_image[0] &&
+      req.files.user_image[0].path;
+  
+    const admin = await Admin.findOne({ email });
+    admin.firstName = firstName;
+    admin.lastName = lastName;
+    admin.email = email;
+  
+    admin.userImage = user_image ? user_image : admin.userImage;
+    await admin.save();
+    // await res.status(201).json({
+    //   message: "Admin Update",
+    //   admin,
+    // });
+    await res.status(201).json({
+      _id: admin._id,
+      firstName: admin.firstName,
+      lastName: admin.lastName,
+      
+      email: admin.email,
+      userImage: admin.userImage,
+      token: generateToken(admin._id)
+  
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.toString() });
 
-  const admin = await Admin.findOne({ email });
-  admin.firstName = firstName;
-  admin.lastName = lastName;
-  admin.email = email;
+  }
 
-  admin.userImage = user_image ? user_image : admin.userImage;
-  await admin.save();
-  // await res.status(201).json({
-  //   message: "Admin Update",
-  //   admin,
-  // });
-  await res.status(201).json({
-    _id: admin._id,
-    firstName: admin.firstName,
-    lastName: admin.lastName,
-    
-    email: admin.email,
-    userImage: admin.userImage,
-    token: generateToken(admin._id)
-
-  });
 });
 
 const userEditProfile = asyncHandler(async (req, res) => {
@@ -518,29 +526,30 @@ const registerUserbyAdmin = asyncHandler(async (req, res) => {
 });
 
 const registerAdminbyAdmin = asyncHandler(async (req, res) => {
-  const { firstName, lastName, email } = req.body;
+  try {
+    const { firstName, lastName, email } = req.body;
 
-  const AdminExists = await Admin.findOne({ email });
-
-  if (AdminExists) {
-    res.status(400);
-    throw new Error("Admin already exists");
-  }
-
-  const admin = await Admin.create({
-    firstName,
-    lastName,
-    email
-  });
-
-  if (admin) {
-    res.status(201).json({
-      admin
+    const AdminExists = await Admin.findOne({ email });
+  
+    if (AdminExists) {
+      res.status(400).json({ message:"Admin already exists"});
+    }
+  
+    const admin = await Admin.create({
+      firstName,
+      lastName,
+      email
     });
-  } else {
-    res.status(400);
-    throw new Error("Invalid user data");
+  
+      res.status(201).json({
+        admin
+      });
+  } catch (error) {
+    return res.status(400).json({ message: error.toString() });
+
   }
+
+  
 });
 
 const adminlogs = async (req, res) => {
