@@ -9,7 +9,7 @@ const ConsultationSchema = mongoose.Schema(
     confirmationinfo: { type: Object },
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
+      // required: true,
       ref: "User"
     },
     governmentid: { type: String },

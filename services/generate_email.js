@@ -3,8 +3,8 @@ import nodemailer from 'nodemailer'
 var smtpConfiq = {
   service: "Gmail",
   auth: {
-    user: 'noreplydummy125@gmail.com',
-    pass: 'kqswulhtckzdcdna',
+    user: 'noreplydummy1256@gmail.com',
+    pass: 'rirl rvjn eqju bemx',
   },
 };
 
@@ -13,7 +13,7 @@ const  generateEmail= async (email, subject, html) => {
     try {
       const transporter = nodemailer.createTransport(smtpConfiq);
       const mailOptions = {
-        from: 'arsalantanvir@yahoo.com',
+        from: 'yahkiawakened@gmail.com',
         to: email,
         subject,
         text: "hiiii",
