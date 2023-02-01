@@ -5,12 +5,9 @@ import Mongoose from "mongoose";
 const createConsultation = async (req, res) => {
   try {
     const {
-      paymentResultData,
-      paymentResultDetails,
       consultationaddress,
       appointmenttime,
       appointmentdate,
-      // paymentinfo,
       confirmationinfo,
       user
     } = req.body;
@@ -35,9 +32,7 @@ const createConsultation = async (req, res) => {
       appointmenttime,
       appointmentdate: datee,
 
-      paymentResultDetails: JSON.parse(paymentResultDetails),
 
-      paymentResultData: JSON.parse(paymentResultData),
       confirmationinfo: JSON.parse(confirmationinfo),
       user,
       governmentid: doc_schedule

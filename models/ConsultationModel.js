@@ -6,8 +6,6 @@ const ConsultationSchema = mongoose.Schema(
     consultationaddress: { type: Object },
     appointmenttime: { type: String },
     appointmentdate: { type: String },
-    paymentResultData: { type: Object },
-paymentResultDetails: { type: Object },
     confirmationinfo: { type: Object },
     user: {
       type: mongoose.Schema.Types.ObjectId,
