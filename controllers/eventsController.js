@@ -159,7 +159,7 @@ const userBookings = async (req, res) => {
     try {
         const bookings = await Booking.find({
            user:req.id
-        }).lean();
+        }).populate('event');
 
         res.status(201).json({
             bookings

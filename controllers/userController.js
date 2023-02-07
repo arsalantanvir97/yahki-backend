@@ -15,13 +15,13 @@ const logs = async (req, res) => {
       {
         $or: [
           {
-            firstName: {
+            firstname: {
               $regex: `${req.query.searchString}`,
               $options: "i"
             }
           },
           {
-            lastName: {
+            lastname: {
               $regex: `${req.query.searchString}`,
               $options: "i"
             }
@@ -128,8 +128,8 @@ const editProfile = asyncHandler(async (req, res) => {
     req.files.user_image[0].path;
 
   const user = await User.findOne({ email });
-  user.firstName = firstName;
-  user.lastName = lastName;
+  user.firstname = firstName;
+  user.lastname = lastName;
   user.email = email;
 
   user.userImage = user_image ? user_image : user.userImage;
