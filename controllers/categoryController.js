@@ -173,7 +173,6 @@ const editCategory = async (req, res) => {
 const allOfCategories = async (req, res) => {
   try {
     const getAllCategories = await Category.find()
-    console.log('getAllCategories', getAllCategories)
     if (getAllCategories) {
       res.status(201).json({
         getAllCategories,
@@ -188,7 +187,6 @@ const allOfCategories = async (req, res) => {
 const getGeoGeneticsCategory = async (req, res) => {
   try {
     const getAllCategories = await Category.findOne({categorytitle:`Geo'Genetics`})
-    console.log('getAllCategories', getAllCategories)
     if (getAllCategories) {
       res.status(201).json({
         getAllCategories,

@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 
-import {
+import {getInstructionDetails,
     createinstruction,getallinstructions,editinstruction,editinstructiontext,
     instructionlogs,
     editeattolivetext} from "../controllers/instructionController";
@@ -15,6 +15,7 @@ router.post('/editinstructiontext', protect, editinstructiontext)
 router.post('/editeattolivetext', protect, editeattolivetext)
 
 router.get('/instructionlogs',protect, instructionlogs)
+router.get("/getInstructionDetails/:id", getInstructionDetails);
 
 
 export default router;

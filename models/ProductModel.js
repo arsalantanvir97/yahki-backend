@@ -27,6 +27,10 @@ const ProductSchema = mongoose.Schema(
     name: {
       type: String
     },
+    howtouse: {
+      type: String
+    },
+    
     geotype: {
       type: String
     },
@@ -45,12 +49,17 @@ const ProductSchema = mongoose.Schema(
       required: true,
       ref: "Category"
     },
+    tag: [{
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Tag"
+    }],
     description: {
       type: String
     },
     status: {
       type: Boolean,
-      default:true
+      default: true
     },
     reviews: [ReviewSchema],
     rating: {

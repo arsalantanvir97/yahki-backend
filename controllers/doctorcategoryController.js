@@ -1,30 +1,30 @@
-import Tax from '../models/TaxModel'
+import DoctorCategory from '../models/DoctorCategoryModel'
 import moment from 'moment'
 
-const createTax = async (req, res) => {
-  const { state, percent } = req.body
+const createdoctorcategory = async (req, res) => {
+  const { title } = req.body
   console.log('req.body', req.body)
   try {
-    const TaxExists = await Tax.findOne({ state })
+    const DoctorCategoryExists = await DoctorCategory.findOne({ title })
 
-    if (TaxExists) {
+    if (DoctorCategoryExists) {
       res.status(400)
-      throw new Error('Tax already exists for this State')
+      throw new Error('DoctorCategory already exists for this State')
     }
   
-    const tax = new Tax({
-        state, percent,
+    const doctorCategory = new DoctorCategory({
+        title
     })
-    console.log('tax', tax)
+    console.log('DoctorCategory', doctorCategory)
     //   const feedbackcreated = await Feedback.create(
     //     feedback
     //   );
     //   console.log('feedbackcreated',feedbackcreated)
-    const taxcreated = await tax.save()
-    console.log('taxcreated', taxcreated)
-    if (taxcreated) {
+    const doctorCategorycreated = await doctorCategory.save()
+    console.log('doctorCategorycreated', doctorCategorycreated)
+    if (doctorCategorycreated) {
       res.status(201).json({
-        taxcreated,
+        doctorCategorycreated,
       })
     }
   } catch (err) {
@@ -33,19 +33,18 @@ const createTax = async (req, res) => {
     })
   }
 }
-const editTax = async (req, res) => {
-  const { state, percent,taxid } = req.body
+const editdoctorcategory = async (req, res) => {
+  const { title ,id} = req.body
   console.log('req.body', req.body)
   try {
-    const tax = await Tax.findOne({_id:taxid})
-    console.log('tax', tax)
-    tax.state = state
-    tax.percent = percent
-    await tax.save()
-    console.log('tax', tax)
+    const doctorCategory = await DoctorCategory.findOne({_id:id})
+    console.log('doctorCategory', doctorCategory)
+    doctorCategory.title = title
+    await doctorCategory.save()
+    console.log('doctorCategory', doctorCategory)
 
     res.status(201).json({
-      message: 'Tax Updated Successfully',
+      message: 'DoctorCategory Updated Successfully',
     })
   } catch (err) {
     res.status(500).json({
@@ -54,7 +53,7 @@ const editTax = async (req, res) => {
   }
 }
 
-const taxlogs = async (req, res) => {
+const doctorcategorylogs = async (req, res) => {
     try {
       console.log('req.query.searchString', req.query.searchString)
       const searchParam = req.query.searchString
@@ -80,7 +79,7 @@ const taxlogs = async (req, res) => {
           ? { createdAt: 1 }
           : { createdAt: 1 };
 
-      const tax = await Tax.paginate(
+      const doctorCategory = await DoctorCategory.paginate(
         {
           ...searchParam,
           ...status_filter,
@@ -95,7 +94,7 @@ const taxlogs = async (req, res) => {
         }
       )
       await res.status(200).json({
-        tax,
+        doctorCategory,
       })
     } catch (err) {
       console.log(err)
@@ -104,41 +103,38 @@ const taxlogs = async (req, res) => {
       })
     }
   }
-  const deleteTax = async (req, res) => {
+  
+
+  const getdoctorcategorydetails = async (req, res) => {
     try {
-      await Tax.findByIdAndRemove(req.params.id)
-      return res.status(201).json({ message: 'Tax Deleted' })
+      const doctorCategory = await DoctorCategory.findOne({ _id: req.params.id });
+      await res.status(201).json({
+        doctorCategory
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString()
+      });
+    }
+  };
+  const gettalldoctorcategorys = async (req, res) => {
+    try {
+      const getAlldoctorCategory = await DoctorCategory.find()
+      console.log('getAlldoctorCategory', getAlldoctorCategory)
+      if (getAlldoctorCategory) {
+        res.status(201).json({
+          getAlldoctorCategory,
+        })
+      }
     } catch (err) {
       res.status(500).json({
         message: err.toString(),
       })
     }
   }
-
-  const gettaxdetails = async (req, res) => {
-    try {
-        const { state } = req.body
-      const tax = await Tax.findOne({state:state});
-      await res.status(201).json({
-        tax
-      });
-    } catch (err) {
-      res.status(500).json({
-        message: err.toString()
-      });
-    }
-  };
-  const taxDetails = async (req, res) => {
-    try {
-      const tax = await Tax.findOne({_id:req.params.id});
-      await res.status(201).json({
-        tax
-      });
-    } catch (err) {
-      res.status(500).json({
-        message: err.toString()
-      });
-    }
-  };
-  
-export { createTax, editTax, taxlogs,deleteTax,gettaxdetails,taxDetails}
+export {   createdoctorcategory,
+    editdoctorcategory,
+    doctorcategorylogs,
+    getdoctorcategorydetails,
+    gettalldoctorcategorys
+  }

@@ -39,4 +39,26 @@ const usernotifications = async (req, res) => {
   }
 };
 
-export { getallNotification, usernotifications };
+const notificationlogs = async (req, res) => {
+  try {
+    const notification = await Notification.paginate({}
+         , {
+        page: req.query.page,
+        limit: req.query.perPage,
+        lean: true,
+        sort: "_id"
+      }
+    );
+    await res.status(200).json({
+      notification
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
+
+export { getallNotification, usernotifications,notificationlogs };

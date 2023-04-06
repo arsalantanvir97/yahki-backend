@@ -26,6 +26,12 @@ import instructionRoutes from "./routes/instructionRoutes";
 import promoCodeRoutes from "./routes/promoCodeRoutes";
 import faqsRoutes from "./routes/faqsRoutes";
 import eventRoutes from "./routes/eventRoutes";
+import tagRoutes from "./routes/tagRoutes";
+import doctorcategoryRoutes from "./routes/doctorcategoryRoutes";
+import doctorRoutes from "./routes/doctorRoutes";
+import coupanRoutes from "./routes/coupanRoutes";
+import disputeRoutes from "./routes/disputeRoutes";
+
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -36,7 +42,7 @@ dotenv.config();
 const PORT = 5089;
 
 // SSL Configuration
-const local = false;
+const local = true;
 let credentials = {};
 
 if (local) {
@@ -95,10 +101,10 @@ app.get('/api/config/paypal', (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
 )
 app.get('/api/config/authorize', (req, res) =>
-  res.send({loginid:process.env.AUHTORIZE_APILOGIN_ID,transactionkey:process.env.AUHTORIZE_TRANSACTION_KEY})
+  res.send({ loginid: process.env.AUHTORIZE_APILOGIN_ID, transactionkey: process.env.AUHTORIZE_TRANSACTION_KEY })
 )
 app.get('/api/config/sezzle', (req, res) =>
-  res.send({keyid:process.env.SEZZLE_KEY_ID,publickey:process.env.SEZZLE_PUBLIC_KEY,privatekey:process.env.SEZZLE_PRIVATE_KEY})
+  res.send({ keyid: process.env.SEZZLE_KEY_ID, publickey: process.env.SEZZLE_PUBLIC_KEY, privatekey: process.env.SEZZLE_PRIVATE_KEY })
 )
 app.post("/api/checkout", async (req, res) => {
   console.log("Request:", req.body);
@@ -164,6 +170,11 @@ app.use("/api/instruction", instructionRoutes);
 app.use("/api/promo", promoCodeRoutes);
 app.use("/api/faq", faqsRoutes);
 app.use("/api/event", eventRoutes);
+app.use("/api/tag", tagRoutes);
+app.use("/api/doctor", doctorRoutes);
+app.use("/api/doctorcategory", doctorcategoryRoutes);
+app.use("/api/coupan", coupanRoutes);
+app.use("/api/dispute", disputeRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));

@@ -175,9 +175,21 @@ const editeattolivetext = async function (req, res) {
     });
   }
 };
-
+const getInstructionDetails = async (req, res) => {
+  try {
+    const instruction = await Instruction.findById(req.params.id);
+    await res.status(201).json({
+      instruction
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 export {
   createinstruction,
+  getInstructionDetails,
   getallinstructions,
   editeattolivetext,
   editinstruction,

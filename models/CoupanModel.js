@@ -1,11 +1,8 @@
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-const PromoCodeSchema = mongoose.Schema(
+const CoupanSchema = mongoose.Schema(
   {
-    status: {
-      type: Boolean,
-    },
     title: {
       type: String
     },
@@ -15,7 +12,7 @@ const PromoCodeSchema = mongoose.Schema(
     endingdate: {
       type: Date
     },
-    promocode: {
+    coupan: {
       type: String
     },
 
@@ -35,9 +32,9 @@ const PromoCodeSchema = mongoose.Schema(
   }
 );
 
-PromoCodeSchema.plugin(mongoosePaginate);
-PromoCodeSchema.index({ "$**": "text" });
+CoupanSchema.plugin(mongoosePaginate);
+CoupanSchema.index({ "$**": "text" });
 
-const PromoCode = mongoose.model("PromoCode", PromoCodeSchema);
+const Coupan = mongoose.model("Coupan", CoupanSchema);
 
-export default PromoCode;
+export default Coupan;

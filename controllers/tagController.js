@@ -1,30 +1,30 @@
-import Tax from '../models/TaxModel'
+import Tag from '../models/TagModel'
 import moment from 'moment'
 
-const createTax = async (req, res) => {
-  const { state, percent } = req.body
+const createtag = async (req, res) => {
+  const { title } = req.body
   console.log('req.body', req.body)
   try {
-    const TaxExists = await Tax.findOne({ state })
+    const TagExists = await Tag.findOne({ title })
 
-    if (TaxExists) {
+    if (TagExists) {
       res.status(400)
-      throw new Error('Tax already exists for this State')
+      throw new Error('Tag already exists for this State')
     }
   
-    const tax = new Tax({
-        state, percent,
+    const tag = new Tag({
+        title
     })
-    console.log('tax', tax)
+    console.log('tag', tag)
     //   const feedbackcreated = await Feedback.create(
     //     feedback
     //   );
     //   console.log('feedbackcreated',feedbackcreated)
-    const taxcreated = await tax.save()
-    console.log('taxcreated', taxcreated)
-    if (taxcreated) {
+    const tagcreated = await tag.save()
+    console.log('tagcreated', tagcreated)
+    if (tagcreated) {
       res.status(201).json({
-        taxcreated,
+        tagcreated,
       })
     }
   } catch (err) {
@@ -33,19 +33,18 @@ const createTax = async (req, res) => {
     })
   }
 }
-const editTax = async (req, res) => {
-  const { state, percent,taxid } = req.body
+const edittag = async (req, res) => {
+  const { title ,id} = req.body
   console.log('req.body', req.body)
   try {
-    const tax = await Tax.findOne({_id:taxid})
-    console.log('tax', tax)
-    tax.state = state
-    tax.percent = percent
-    await tax.save()
-    console.log('tax', tax)
+    const tag = await Tag.findOne({_id:id})
+    console.log('tag', tag)
+    tag.title = title
+    await tag.save()
+    console.log('tag', tag)
 
     res.status(201).json({
-      message: 'Tax Updated Successfully',
+      message: 'Tag Updated Successfully',
     })
   } catch (err) {
     res.status(500).json({
@@ -54,7 +53,7 @@ const editTax = async (req, res) => {
   }
 }
 
-const taxlogs = async (req, res) => {
+const taglogs = async (req, res) => {
     try {
       console.log('req.query.searchString', req.query.searchString)
       const searchParam = req.query.searchString
@@ -80,7 +79,7 @@ const taxlogs = async (req, res) => {
           ? { createdAt: 1 }
           : { createdAt: 1 };
 
-      const tax = await Tax.paginate(
+      const tag = await Tag.paginate(
         {
           ...searchParam,
           ...status_filter,
@@ -95,7 +94,7 @@ const taxlogs = async (req, res) => {
         }
       )
       await res.status(200).json({
-        tax,
+        tag,
       })
     } catch (err) {
       console.log(err)
@@ -104,41 +103,37 @@ const taxlogs = async (req, res) => {
       })
     }
   }
-  const deleteTax = async (req, res) => {
+  
+
+  const gettagdetails = async (req, res) => {
     try {
-      await Tax.findByIdAndRemove(req.params.id)
-      return res.status(201).json({ message: 'Tax Deleted' })
+      const tag = await Tag.findOne({ _id: req.params.id });
+      await res.status(201).json({
+        tag
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString()
+      });
+    }
+  };
+  const gettalltags = async (req, res) => {
+    try {
+      const getAllTags = await Tag.find()
+      console.log('getAllTags', getAllTags)
+      if (getAllTags) {
+        res.status(201).json({
+          getAllTags,
+        })
+      }
     } catch (err) {
       res.status(500).json({
         message: err.toString(),
       })
     }
   }
-
-  const gettaxdetails = async (req, res) => {
-    try {
-        const { state } = req.body
-      const tax = await Tax.findOne({state:state});
-      await res.status(201).json({
-        tax
-      });
-    } catch (err) {
-      res.status(500).json({
-        message: err.toString()
-      });
-    }
-  };
-  const taxDetails = async (req, res) => {
-    try {
-      const tax = await Tax.findOne({_id:req.params.id});
-      await res.status(201).json({
-        tax
-      });
-    } catch (err) {
-      res.status(500).json({
-        message: err.toString()
-      });
-    }
-  };
-  
-export { createTax, editTax, taxlogs,deleteTax,gettaxdetails,taxDetails}
+export { createtag,
+    edittag,
+    taglogs,
+    gettalltags,
+    gettagdetails}

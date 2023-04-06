@@ -3,10 +3,12 @@ import Category from "../models/CategoryModel";
 import GeoGeneticsText from "../models/GeoGeneticsTextModel";
 import Order from "../models/OrderModel";
 import Product from "../models/ProductModel";
+import Tag from "../models/TagModel";
 
 const createProduct = async (req, res) => {
-  const { category, name, price, description, id, visible, countInStock } =
+  const { category,tag,howtouse, name, price, description, id, visible, countInStock } =
     req.body;
+    let taggg=JSON.parse(tag)
   let _reciepts = [];
   const reciepts = [];
   _reciepts = req.files.reciepts;
@@ -19,6 +21,8 @@ const createProduct = async (req, res) => {
       price: Number(price),
       category,
       visible,
+      tag:taggg,
+      howtouse,
       geotype: req.body.type && req.body.type,
       description,
       countInStock: countInStock,
@@ -29,6 +33,15 @@ const createProduct = async (req, res) => {
       const cat = await Category.findOne({ _id: category });
       cat.coursecount = cat.coursecount + 1;
       const updatedcat = cat.save();
+//       const tagg = await Tag.find({ _id:  { $in :taggg }});
+// tagg.map(tg=>(
+//   tg.productcount = tg.productcount + 1
+
+// ))
+// for (let item of tagg){
+//   await item.save()
+// }
+
       //   const feedbackcreated = await Feedback.create(
       //     feedback
       //   );
@@ -49,7 +62,7 @@ const createProduct = async (req, res) => {
 };
 const getproducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().populate('tag');
     console.log("products", products);
     if (products) {
       res.status(201).json({
@@ -82,7 +95,7 @@ const geoGeneticsText = async (req, res) => {
 
 const getProductDetails = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate("category");
+    const product = await Product.findById(req.params.id).populate("category tag");
     await res.status(201).json({
       product
     });
@@ -95,7 +108,7 @@ const getProductDetails = async (req, res) => {
 const getProductDetailsByName = async (req, res) => {
   try {
     const product = await Product.findOne({ name: req.params.id }).populate(
-      "category"
+      "category tag" 
     );
     await res.status(201).json({
       product
@@ -546,12 +559,16 @@ const editProduct = async (req, res) => {
       price,
       visible,
       category,
+      howtouse,
       description,
       images,
-      countInStock
+      countInStock,
+      tag
     } = req.body;
     let _reciepts = [];
     const reciepts = [];
+    let taggg=JSON.parse(tag)
+
     console.log("images111", images, typeof images);
     let imagge = JSON.parse(images);
     console.log("imageeeeeess", imagge);
@@ -568,6 +585,10 @@ const editProduct = async (req, res) => {
     console.log("block2", reciepts);
     const product = await Product.findOne({ _id: id });
     product.name = name ? name : product.name;
+    product.howtouse = howtouse ? howtouse : product.howtouse;
+    product.tag = taggg
+
+    
     product.price = price ? price : product.price;
     product.countInStock = countInStock ? countInStock : product.countInStock;
     product.visible = visible ? visible : product.visible;
@@ -592,7 +613,7 @@ const editProduct = async (req, res) => {
 };
 const getproductsbycategoryid = async (req, res) => {
   try {
-    const products = await Product.find({ category: req.params.id });
+    const products = await Product.find({ category: req.params.id }).populate("category tag");
     console.log("products", products);
 
     res.status(201).json({
@@ -613,7 +634,7 @@ const productsbycategoryid = async (req, res) => {
       category: { $eq: req.query.id },
       _id: { $ne: req.query.productid }
     })
-      .populate("category")
+      .populate("category tag")
       .limit(6);
     console.log("products", products);
 
@@ -696,7 +717,7 @@ const bittersandElementProducts = async (req, res) => {
   try {
     const product = await Product.find({
       $or: [{ name: "IV Elements" }, { name: "3 BITTERS" }]
-    }).populate("category");
+    }).populate("category tag");
     await res.status(201).json({
       product
     });

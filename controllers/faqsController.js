@@ -87,7 +87,7 @@ const editfaqs = async (req, res) => {
   const { question, answer } = req.body;
   console.log("req.body", req.body);
   try {
-    const tax = await Tax.findOne({ _id: taxid });
+    const tax = await FAQS.findOne({ _id: taxid });
     console.log("tax", tax);
     tax.state = state;
     tax.percent = percent;

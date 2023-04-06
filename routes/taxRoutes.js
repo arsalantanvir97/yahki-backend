@@ -6,7 +6,8 @@ import {
   editTax,
   taxlogs,
   deleteTax,
-  gettaxdetails
+  gettaxdetails,
+  taxDetails
 } from '../controllers/taxController'
 import { protect } from '../middlewares/authMiddleware'
 
@@ -16,5 +17,6 @@ router.post('/gettaxdetails', protect, gettaxdetails)
 
 router.get('/taxlogs', taxlogs)
 router.get('/deleteTax/:id', protect, deleteTax)
+router.get('/taxDetails/:id', taxDetails)
 
 export default router
