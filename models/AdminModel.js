@@ -18,6 +18,10 @@ const AdminSchema = mongoose.Schema(
     password: {
       type: String,
     },
+    timimgslot: {
+      type: Array,
+  },
+
     userImage: { type: String }
   },
   {

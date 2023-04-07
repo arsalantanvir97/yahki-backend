@@ -7,12 +7,13 @@ import {
   verifyRecoverCode,
   resetPassword,
   editProfile,
+  getDetails,
   // registerUser,
   authUser,
   verifyAndREsetPassword,
-  adminRecoverPassword,
-  adminverifyRecoverCode,
-  adminresetPassword,
+  adminRecoverPassword,setPageView,
+  adminverifyRecoverCode,timeslotAdmin,getPageView,
+  adminresetPassword,updateAppointmentFees,
   registerUserbyAdmin,emailLogin,registerAdminbyAdmin,adminlogs,adminDetails,deleteAdmin, userEditProfile
 } from "../controllers/authController.js";
 import { getVideo, uploadVideo } from "../controllers/videoController.js";
@@ -21,12 +22,18 @@ import { extendTimeout } from "../middlewares/extendTimeout.js";
 
 router.post("/adminRegister", registerAdmin);
 router.post("/registerAdminbyAdmin", protect,registerAdminbyAdmin);
+router.post("/setPageView",setPageView);
 
 
 router.post("/adminAuth", authAdmin);
 router.post("/userRecoverPassword", recoverPassword);
 router.post("/adminRecoverPassword", adminRecoverPassword);
 router.get("/adminlogs",protect, adminlogs);
+router.get("/getDetails",protect, getDetails);
+router.post("/timeslotAdmin",protect, timeslotAdmin);
+router.get("/getPageView",protect, getPageView);
+
+
 
 router.post("/userverifyRecoverCode", verifyRecoverCode);
 router.post("/adminverifyRecoverCode", adminverifyRecoverCode);
@@ -35,6 +42,8 @@ router.get("/deleteAdmin/:id", deleteAdmin);
 
 router.post("/userresetPassword", resetPassword);
 router.post("/adminresetPassword", adminresetPassword);
+router.post("/updateAppointmentFees",protect, updateAppointmentFees);
+
 
 router.get("/admin-details/:id",adminDetails);
 

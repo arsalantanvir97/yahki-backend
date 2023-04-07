@@ -1,4 +1,6 @@
+import Admin from "../models/AdminModel";
 import Consultation from "../models/ConsultationModel";
+import { MakeFriends } from "../services/SoaChat";
 import CreateNotification from "../utills/notification";
 import Mongoose from "mongoose";
 
@@ -38,6 +40,9 @@ const createConsultation = async (req, res) => {
       governmentid: doc_schedule
     });
     if (consultation) {
+const admin=await Admin.findOne()
+      await MakeFriends(admin._id, user);
+
       const notification = {
         notifiableId: null,
         notificationType: "Admin",

@@ -16,6 +16,9 @@ import {
 } from "../queries";
 import CreateNotification from "../utills/notification.js";
 import WishList from "../models/WishListModel.js";
+import AppointmentFees from "../models/AppointmentFees.js";
+import { addSoaUser } from "../services/SoaChat.js";
+import PageView from "../models/PageView.js";
 
 const registerAdmin = asyncHandler(async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -55,6 +58,8 @@ try {
   const admin = await Admin.findOne({ email });
 
   if (admin && (await admin.matchPassword(password))) {
+    await addSoaUser(admin._id,admin.fullName)
+
     res.json({
       _id: admin._id,
       firstName: admin.firstName,
@@ -379,6 +384,8 @@ const authUser = asyncHandler(async (req, res) => {
   const wishlist = await WishList.find({ user:user._id }).select('product');
 
   if (user && (await user.matchPassword(password))) {
+    await addSoaUser(user._id, user.firstname);
+
     res.json({
       _id: user._id,
       firstname: user.firstname,
@@ -647,14 +654,111 @@ const deleteAdmin = async (req, res) => {
     });
   }
 };
+
+const updateAppointmentFees  = async (req, res) => {
+  const { fees,date } = req.body;
+console.log('req.body',req.body)
+let setting
+  try {
+     setting = await AppointmentFees.findOne()
+if (setting){
+  setting.fees=fees
+  setting.date=date
+
+}else{
+  setting =new AppointmentFees ({
+    fees,date}
+  )
+  
+}
+const createdsetting=await setting.save()
+console.log('createdsetting',createdsetting)
+  if (createdsetting) {
+    res.status(201).json({
+        createdsetting
+    });
+
+     
+  } }catch (err) {
+    res.status(500).json({
+      message: err.toString(),
+    });
+  }
+};
+const getDetails = async (req, res) => {
+  try {
+    const setting = await AppointmentFees.findOne()
+    
+    await res.status(201).json({
+      setting
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const timeslotAdmin = async (req, res) => {
+  try {
+    const {timimgslot}=req.body
+    const admin = await Admin.findOne()
+    admin.timimgslot=timimgslot
+    await admin.save()
+    await res.status(201).json({
+      messahge:'Updated Successfully'
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const setPageView = async (req, res) => {
+  try {
+    const {url}=req.body
+    
+    const page = await PageView.findOneAndUpdate(
+      { "url": url }, 
+      {"url": url, $inc:{"qty": 1}},
+      { new: true, upsert: true, returnNewDocument: true })
+    await res.status(201).json({
+      messahge:'Updated Successfully'
+    });
+  } catch (err) {
+    console.log('err,err',err)
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const getPageView = async (req, res) => {
+  try {
+    
+    const page = await PageView.find().sort({"qty":1})
+    await res.status(201).json({
+      page
+    });
+  } catch (err) {
+    console.log('err,err',err)
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
+
 export {
-  registerAdmin,
+  registerAdmin,getPageView,
+  setPageView,
   deleteAdmin,
   authAdmin,
+  updateAppointmentFees,
   recoverPassword,
   verifyRecoverCode,
   resetPassword,
+  timeslotAdmin,
   editProfile,
+  getDetails,
   authUser,
   adminRecoverPassword,
   verifyAndREsetPassword,
