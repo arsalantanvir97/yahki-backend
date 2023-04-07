@@ -1687,7 +1687,34 @@ const revenuedata = async (req, res) => {
         // { $unwind: '$data.orderItems' },
 
       ];
-    const [overvieworders, allproducts, orderbysalesgraph, salesCount, topCategoiresItemsSoldbyyear, overallTopSeller,revenuebydayOrder] = await Promise.all([
+      const query12 =
+      [
+        {
+          $match: {
+            createdAt: {
+              $gte: start_date2,
+              $lte: end_date2
+            },
+          }
+        },
+
+
+        {
+          $group: {
+            _id: 0,
+            count: { $sum: "$totalPrice" },
+            data: {
+              $push: "$$ROOT"
+            },
+          }
+        },
+
+
+
+      ];
+
+
+    const [overvieworders, allproducts, orderbysalesgraph, salesCount, topCategoiresItemsSoldbyyear, overallTopSeller,revenuebydayOrder,overviewrevenuedata] = await Promise.all([
       Order.aggregate(query6),
       Order.aggregate(query11),
       Order.aggregate(query66),
@@ -1695,6 +1722,7 @@ const revenuedata = async (req, res) => {
       Order.aggregate(query22),
       Order.aggregate(query5),
       Order.aggregate(query112),
+      Order.aggregate(query12),
 
       
     ]);
@@ -1710,7 +1738,7 @@ const revenuedata = async (req, res) => {
       allproducts,
       orderbysalesgraph: orderarr,
       orderbysalesgraphdata: orderbysalesgraph,
-
+      overviewrevenuedata,
       totalordergraph: arr,
       topCategoiresItemsSoldbyyear,
       overallTopSeller,

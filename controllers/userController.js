@@ -6,6 +6,7 @@ import generateToken from "../utills/generateJWTtoken.js";
 import User from "../models/UserModel.js";
 import Order from "../models/OrderModel.js";
 import Membership from "../models/MembershipModel.js";
+import { addSoaUser } from "../services/SoaChat.js";
 
 const logs = async (req, res) => {
   try {
@@ -206,6 +207,8 @@ const becomemeber = async (req, res) => {
       membershipstatus,
     })
     await user.save()
+    await addSoaUser(user._id, user.firstname);
+
     res.status(201).json({
       _id: user._id,
       firstname: user.firstname,

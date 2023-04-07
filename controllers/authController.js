@@ -38,6 +38,8 @@ const registerAdmin = asyncHandler(async (req, res) => {
   });
 
   if (admin) {
+    await addSoaUser(admin._id,admin.firstName)
+
     res.status(201).json({
       _id: admin._id,
       firstName: admin.firstName,
@@ -58,7 +60,6 @@ try {
   const admin = await Admin.findOne({ email });
 
   if (admin && (await admin.matchPassword(password))) {
-    await addSoaUser(admin._id,admin.fullName)
 
     res.json({
       _id: admin._id,
@@ -346,6 +347,7 @@ const registerUser = asyncHandler(async (req, res) => {
   });
   console.log("user", user);
   if (user) {
+
     const notification = {
       notifiableId: null,
       notificationType: "Admin",
@@ -384,7 +386,6 @@ const authUser = asyncHandler(async (req, res) => {
   const wishlist = await WishList.find({ user:user._id }).select('product');
 
   if (user && (await user.matchPassword(password))) {
-    await addSoaUser(user._id, user.firstname);
 
     res.json({
       _id: user._id,
