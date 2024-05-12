@@ -1,4 +1,4 @@
-E-Commerce Backend
+Yahki Backend
 Welcome to the backend repository for our e-commerce platform. This Node.js project serves as the backend for our application, providing the necessary APIs for managing products, categories, orders, and more.
 
 Technologies Used
